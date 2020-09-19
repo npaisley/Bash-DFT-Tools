@@ -17,8 +17,13 @@ Reads your gaussian .com file and sets `sbatch` settings for you to avoid mistak
 Additionally, it wries a run script for gaussian 16 calculations. This allows for opt and freq calculations to be restarted by the script without your input
 
 ## multiComWriter.sh  
+
 ## NTOcomwriter.sh  
+
 ## RSHOpt.sh  
+
 ## valueExtractor-optfreq.sh  
+
 ## valueExtractor-TDDFT.sh  
+
 ## gparse.sh
