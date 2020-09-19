@@ -2,14 +2,14 @@
 Collection of bash shell scripts for use submitting jobs, making input files, and extracting information
 Designed to use on compute canada serveers that are running SLURM
 
-Within the DFT_Sripts folder the following files are found: 
-[sg16submit-Mkx.x.x.x.sh](#sg16submit.sh) 
-[multiComWriter.sh](#multiComWriter.sh) 
-[NTOcomwriter.sh](#NTOcomwriter.sh) 
-[RSHOpt-Mkx.x.x.sh](#RSHOpt.sh) 
-[valueExtractor-optfreq.sh](#valueExtractor-optfreq.sh) 
-[valueExtractor-TDDFT.sh](#valueExtractor-TDDFT.sh) 
-[gparse.sh](#gparse.sh) 
+Within the DFT_Sripts folder the following files are found:  
+[sg16submit-Mkx.x.x.x.sh](#sg16submit.sh)  
+[multiComWriter.sh](#multiComWriter.sh)  
+[NTOcomwriter.sh](#NTOcomwriter.sh)  
+[RSHOpt-Mkx.x.x.sh](#RSHOpt.sh)  
+[valueExtractor-optfreq.sh](#valueExtractor-optfreq.sh)  
+[valueExtractor-TDDFT.sh](#valueExtractor-TDDFT.sh)  
+[gparse.sh](#gparse.sh)  
 
 ## sg16submit.sh
 For use with SLURM  
