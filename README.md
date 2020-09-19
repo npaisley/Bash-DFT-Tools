@@ -6,7 +6,7 @@ Within the DFT_Sripts folder the following files are found:
 [sg16submit-Mkx.x.x.x.sh](#sg16submitsh)  
 [multiComWriter.sh](#multicomwritersh)  
 [NTOcomwriter.sh](#ntocomwritersh)  
-[RSHOpt-Mkx.x.x.sh](#rshopt.sh)  
+[RSHOpt-Mkx.x.x.sh](#rshoptsh)  
 [valueExtractor-optfreq.sh](#valueExtractor-optfreqsh)  
 [valueExtractor-TDDFT.sh](#valueExtractor-tddftsh)  
 [gparse.sh](#gparsesh)  
