@@ -13,5 +13,5 @@ gparse.sh
 
 # sg16submit-Mkx.x.x.x.sh
 For use with SLURM  
-Reads your gaussian .com file and sets `sbatch` settings for you to avoid mistakes or the headache of doing it manually for many files  
+Reads your gaussian .com file and sets `sbatch` settings for you to avoid mistakes or the headache of doing it manually for many files. 
 Additionally, it wries a run script for gaussian 16 calculations. This allows for opt and freq calculations to be restarted by the script without your input
