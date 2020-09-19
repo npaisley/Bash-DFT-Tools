@@ -4,11 +4,11 @@ Designed to use on compute canada serveers that are running SLURM
 
 Within the DFT_Sripts folder the following files are found:  
 [sg16submit-Mkx.x.x.x.sh](#sg16submitsh)  
-[multiComWriter.sh](#multiComWritersh)  
-[NTOcomwriter.sh](#NTOcomwritersh)  
-[RSHOpt-Mkx.x.x.sh](#RSHOpt.sh)  
+[multiComWriter.sh](#multicomwritersh)  
+[NTOcomwriter.sh](#ntocomwritersh)  
+[RSHOpt-Mkx.x.x.sh](#rshopt.sh)  
 [valueExtractor-optfreq.sh](#valueExtractor-optfreqsh)  
-[valueExtractor-TDDFT.sh](#valueExtractor-TDDFTsh)  
+[valueExtractor-TDDFT.sh](#valueExtractor-tddftsh)  
 [gparse.sh](#gparsesh)  
 
 ## sg16submit.sh
