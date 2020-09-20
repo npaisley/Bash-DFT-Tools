@@ -33,17 +33,23 @@ SCRIPT_FULLNAME=$( realpath $BASH_SOURCE )
 GAUSSIAN_VERSION=
 ######
 
-# this should probably be moved
+# this should be moved
 # gaussian version check
-# 	if $( module spider gaussian | grep -q g16.c01 ) ; then echo "version exists" ; else echo "version not found" ; fi 
-# gaussian version latest
-# G=$( module spider gaussian | grep "gaussian/" | tail -n 2 | head -n 1 )  && G=${G// /}
-# available versions
-# V=$( module spider gaussian | grep gaussian/ ) 
-# VL=$( echo "$V" | wc -l ) 
-# echo "$V" | head -n $(( ${VL} - 1 )) 
-# Check for NImag (complicated because the key word can be split over multiple lines and each newline in the block it is in starts with a space)
-# for F in DTA POZP DMAP HMAT ; do echo ${F}-BFC-freq2-re.log ; cat ${F}-BFC-freq2-re.log | tr -d '\n' | tr -d ' ' | grep -io "NImag=." ; done 
+if $( module spider gaussian | grep -q g16.c01 ) ; then 
+	echo "version exists"
+else 
+	echo "version not found"
+fi 
+#gaussian version latest
+#im honestly not sure what I was trying to do here
+G=$( module spider gaussian | grep "gaussian/" | tail -n 2 | head -n 1 )  && G=${G// /}
+available versions
+V=$( module spider gaussian | grep gaussian/ ) 
+VL=$( echo "$V" | wc -l ) 
+echo "$V" | head -n $(( ${VL} - 1 )) 
+
+Check for NImag (complicated because the key word can be split over multiple lines and each newline in the block it is in starts with a space)
+for F in DTA POZP DMAP HMAT ; do echo ${F}-BFC-freq2-re.log ; cat ${F}-BFC-freq2-re.log | tr -d '\n' | tr -d ' ' | grep -io "NImag=." ; done 
 
 ### EXIT CONDITIONS ###
 ER_COM_FILE=1
