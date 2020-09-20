@@ -207,9 +207,6 @@ ROUTE=$( grep \# ${1} | head -n 1 )
 # use below for error checking. rest is not needed
 	echo "ERROR: incorrect memory units specified in .com file. Must use MB or GB"
 	exit ${ER_MEM_UNIT}
-fi
-
-
 }
 
 
