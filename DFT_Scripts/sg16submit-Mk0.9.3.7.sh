@@ -30,7 +30,26 @@ LOG=${LOG_DIR}/sg16submit.log
 COMP_VALUE=2 # this value is added to the memory requested in the com file to account for gaussian over use of memory. Value in GB. Gaussian typically uses about 1 GB more than specified.
 SCRIPT_NAME=$( basename $BASH_SOURCE )
 SCRIPT_FULLNAME=$( realpath $BASH_SOURCE )
+GAUSSIAN_VERSION=
 ######
+
+# this should be moved
+# gaussian version check
+if $( module spider gaussian | grep -q g16.c01 ) ; then 
+	echo "version exists"
+else 
+	echo "version not found"
+fi 
+#gaussian version latest
+#im honestly not sure what I was trying to do here
+G=$( module spider gaussian | grep "gaussian/" | tail -n 2 | head -n 1 )  && G=${G// /}
+available versions
+V=$( module spider gaussian | grep gaussian/ ) 
+VL=$( echo "$V" | wc -l ) 
+echo "$V" | head -n $(( ${VL} - 1 )) 
+
+#Check for NImag (complicated because the key word can be split over multiple lines and each newline in the block it is in starts with a space)
+
 
 ### EXIT CONDITIONS ###
 ER_COM_FILE=1
@@ -93,7 +112,7 @@ echo "Gaussian 16 calculation of: ${COM_NAME}"
 module load gaussian/g16.b01
 
 echo "started on: $( date )"
-timeout ${TIMEOUT}m g16 <${COM_NAME}.com >>${COM_NAME}.log             # g16 command
+timeout ${TIMEOUT}m g16 < ${COM_NAME}.com >> ${COM_NAME}.log             # g16 command
 CALC_EXIT=$?
 echo "finished with exit code ${CALC_EXIT} on: $( date )"
 echo
@@ -115,15 +134,17 @@ if [ "${CALC_EXIT}" -eq 124 ] || [ "${CALC_EXIT}" = 128+9 ]; then
 		sbatch --mail-user=${EMAIL} --time=${TIME} --mem=${MEM_VAL}${MEM_UNIT} --cpus-per-task=${NCPUS} --output=${COM_NAME}-%j.out --export=COM_NAME=${COM_NAME},EMAIL=${EMAIL},TIME=${TIME},MEM_VAL=${MEM_VAL},MEM_UNIT=${MEM_UNIT},NCPUS=${NCPUS},SCRIPT=${SCRIPT},TIMEOUT=${TIMEOUT},RESTART=${RESTART},LOG=${LOG} ${SCRIPT} | tee -a ${LOG}
 		SUB_EXIT=$?
 		echo "</submission>" >> ${LOG}
-		
 		if [ ! "${SUB_EXIT}" -eq 0 ]; then
 			echo "ERROR: submission unsuccessful"
 			exit 66
 		fi
-		
 		exit 77
-	fi
 	elseif [ "${CALC_EXIT}" -eq 0 ]
+		#check for NImag if a frequency calculation has been run last
+		#some if statment so this is only done when a freq calc is run
+		#can probably be implemented by passing information from the com reader in the submit script
+		NIMAG=$( cat ${COM_NAME}.log | tr -d '\n' | tr -d ' ' | grep -ioE "NImag=[0-9]{1,}" | tail -n 1 ) #get NImag string
+		NIMAG_NUM=${NIMAG#*=} #extract only the number from NImag
 		echo >> ${LOG}
 		echo "<calculation>" >> ${LOG}
 		echo "	type: completion" >> ${LOG}
@@ -150,6 +171,53 @@ exit ${CALC_EXIT}
 EOF
 }
 
+com_read () {
+# requires COM_FULLNAME as argument. If a keyword is repeated then only the top one is used
+# should be followed by error check (see if error is set to true)
+# read all required values from com file
+# oldchk memory cpus route 
+# add error checking at end. memory (val and units) cpus chk route and rwf must be specified
+
+# check to make sure required values are present
+for I in %rwf= %chk= %mem= %nprocshared= ; do
+	if ! grep -iq "${I}" ${COM_FULLNAME}; then
+		echo "ERROR: ${I} missing from .com file"
+		ERROR=TRUE
+	fi
+done
+
+# get rwf file name
+RWF_FULLNAME=$( grep -i %rwf= ${1} | head -n 1 )
+RWF_FULLNAME=${RWF_FULLNAME##*=}
+
+# get chk file name
+CHK_FULLNAME=$( grep -i %chk= ${1} | head -n 1 )
+CHK_FULLNAME=${CHK_FULLNAME##*=}
+
+# get oldchk file name
+if ! grep -qi %oldchk= ${1} ; then
+	OLDCHK_FULLNAME=$( grep -i %oldchk= ${1} | head -n 1 )
+	OLDCHK_FULLNAME=${OLDCHK_FULLNAME##*=}
+fi
+
+# get memory amount and unit
+COM_MEM=$( grep %mem= ${1} | head -n 1 )
+COM_MEM=${COM_MEM##*=}
+MEM_VAL=${MEM//[!0-9]/}
+MEM_UNIT=${MEM//[!M,G]/}
+
+# get cpus amount
+NCPUS=$( grep -i %nprocshared= ${1} | head -n 1 )
+NCPUS=${NCPUS//[!0-9]/}
+
+# route stuff. will have to think over this
+ROUTE=$( grep \# ${1} | head -n 1 )
+
+# use below for error checking. rest is not needed
+	echo "ERROR: incorrect memory units specified in .com file. Must use MB or GB"
+	exit ${ER_MEM_UNIT}
+}
+
 log_write () {
 mkdir ${LOG_DIR}
 touch ${LOG}
@@ -159,6 +227,7 @@ Log File for ${SCRIPT_NAME}
 ### Default Values ###
 #EMAIL=
 #WALLTIME=01-00:00
+#GAUSSIAN_VERSION=
 ######
 
 EOF
@@ -232,6 +301,8 @@ exit 0
 }
 ######
 
+#add version check here
+#it would be cool to be able to update the log file with new information
 if [ ! -f ${LOG} ]; then
 	log_write
 fi
@@ -277,6 +348,7 @@ while getopts ":f:t:s:TEhr" opt; do
 			exit 0
 			;;
 		r)
+			#check if putting -f after -r breaks this
 			if $( grep -qe 'TD' ${COM_FULLNAME} ) || $( grep -qe 'TDA' ${COM_FULLNAME}) ; then
 				RESTART=DISABLED
 			else
@@ -289,6 +361,7 @@ while getopts ":f:t:s:TEhr" opt; do
 	esac
 done
 
+#this could probably be moved up. Doesn't make sense to run this script without gaussian access
 # ensure user has gaussian access
 if ! groups | grep -q soft_gaussian; then
 	echo "ERROR: You do not have access to gaussian."
@@ -333,6 +406,7 @@ fi
 NCPUS=$( grep %nprocshared= ${COM_FULLNAME} | head -n 1 )
 NCPUS=${NCPUS//[!0-9]/}
 
+# move this down so it happens just before submission
 # set script to be used and write default one if it is not present
 SCRIPT=${SCRIPT_ALT:-$SCRIPT_CALC}
 if [ -z ${SCRIPT_ALT} ] && [ ! -f ${SCRIPT_CALC} ]; then
@@ -341,6 +415,7 @@ if [ -z ${SCRIPT_ALT} ] && [ ! -f ${SCRIPT_CALC} ]; then
 	script_write
 fi
 
+# move up. should happen early
 # check if an email has been specified. If it has not been then ask user to set one
 EMAIL=$( grep '#EMAIL=' ${LOG} )
 EMAIL=${EMAIL#*=}
@@ -352,6 +427,7 @@ while [ -z ${EMAIL} ]; do
 	EMAIL=${EMAIL#*=}
 done
 
+# could make a function for this or just put it all in teh getopts section (probably nicer to make a function)
 # set walltime and if RESTART unset set it to FALSE
 WALLTIME=$( grep \#WALLTIME= ${LOG} )
 WALLTIME=${WALLTIME#*=}
