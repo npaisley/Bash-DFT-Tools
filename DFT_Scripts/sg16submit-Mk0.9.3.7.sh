@@ -48,8 +48,8 @@ V=$( module spider gaussian | grep gaussian/ )
 VL=$( echo "$V" | wc -l ) 
 echo "$V" | head -n $(( ${VL} - 1 )) 
 
-Check for NImag (complicated because the key word can be split over multiple lines and each newline in the block it is in starts with a space)
-for F in DTA POZP DMAP HMAT ; do echo ${F}-BFC-freq2-re.log ; cat ${F}-BFC-freq2-re.log | tr -d '\n' | tr -d ' ' | grep -io "NImag=." ; done 
+#Check for NImag (complicated because the key word can be split over multiple lines and each newline in the block it is in starts with a space)
+
 
 ### EXIT CONDITIONS ###
 ER_COM_FILE=1
@@ -112,7 +112,7 @@ echo "Gaussian 16 calculation of: ${COM_NAME}"
 module load gaussian/g16.b01
 
 echo "started on: $( date )"
-timeout ${TIMEOUT}m g16 <${COM_NAME}.com >>${COM_NAME}.log             # g16 command
+timeout ${TIMEOUT}m g16 < ${COM_NAME}.com >> ${COM_NAME}.log             # g16 command
 CALC_EXIT=$?
 echo "finished with exit code ${CALC_EXIT} on: $( date )"
 echo
@@ -134,15 +134,17 @@ if [ "${CALC_EXIT}" -eq 124 ] || [ "${CALC_EXIT}" = 128+9 ]; then
 		sbatch --mail-user=${EMAIL} --time=${TIME} --mem=${MEM_VAL}${MEM_UNIT} --cpus-per-task=${NCPUS} --output=${COM_NAME}-%j.out --export=COM_NAME=${COM_NAME},EMAIL=${EMAIL},TIME=${TIME},MEM_VAL=${MEM_VAL},MEM_UNIT=${MEM_UNIT},NCPUS=${NCPUS},SCRIPT=${SCRIPT},TIMEOUT=${TIMEOUT},RESTART=${RESTART},LOG=${LOG} ${SCRIPT} | tee -a ${LOG}
 		SUB_EXIT=$?
 		echo "</submission>" >> ${LOG}
-		
 		if [ ! "${SUB_EXIT}" -eq 0 ]; then
 			echo "ERROR: submission unsuccessful"
 			exit 66
 		fi
-		
 		exit 77
-	fi
 	elseif [ "${CALC_EXIT}" -eq 0 ]
+		#check for NImag if a frequency calculation has been run last
+		#some if statment so this is only done when a freq calc is run
+		#can probably be implemented by passing information from the com reader in the submit script
+		NIMAG=$( cat ${COM_NAME}.log | tr -d '\n' | tr -d ' ' | grep -ioE "NImag=[0-9]{1,}" | tail -n 1 ) #get NImag string
+		NIMAG_NUM=${NIMAG#*=} #extract only the number from NImag
 		echo >> ${LOG}
 		echo "<calculation>" >> ${LOG}
 		echo "	type: completion" >> ${LOG}
