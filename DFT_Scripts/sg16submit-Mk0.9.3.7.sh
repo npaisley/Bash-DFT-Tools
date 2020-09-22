@@ -48,9 +48,6 @@ V=$( module spider gaussian | grep gaussian/ )
 VL=$( echo "$V" | wc -l ) 
 echo "$V" | head -n $(( ${VL} - 1 )) 
 
-#Check for NImag (complicated because the key word can be split over multiple lines and each newline in the block it is in starts with a space)
-
-
 ### EXIT CONDITIONS ###
 ER_COM_FILE=1
 ER_TIME_FORMAT=2
