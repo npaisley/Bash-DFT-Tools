@@ -1,5 +1,5 @@
 #!/bin/bash
-#this script extracts the homo, lumo, and total energy from Gaussian calculations
+#this script extracts the homo, lumo, total energy, and first singlet and triplet excited state energies from Gaussian calculations
 
 usage () {
 	echo "run with: ./<script>.sh <log file>.log >> <file name>.csv"
@@ -60,7 +60,7 @@ else
 	TRIPLET='Not calculated'
 fi	
 
-echo "File,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Dipole (Debye)"
-echo "$( basename ${1} ),${HOMO},${HOMO_EV},${LUMO[4]},${LUMO_EV},$( echo "scale=10 ; ${LUMO_EV} - ${HOMO_EV}" | bc ),${DIPOLE}"
+echo "File,Method,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Dipole (Debye),Energy (au),S0 -> S1 (eV),f,S0 -> T1 (eV),f,deltaEst"
+echo "$( basename ${1} ),${HOMO},${HOMO_EV},${LUMO[4]},${LUMO_EV},$( echo "scale=10 ; ${LUMO_EV} - ${HOMO_EV}" | bc ),${DIPOLE},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},$( echo "scale=10 ; ${SINGLET[4]} - ${TRIPLET[4]}" | bc )"
 
 exit 0
