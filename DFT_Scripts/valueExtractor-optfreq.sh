@@ -12,7 +12,7 @@ usage () {
 HA_TO_EV=27.2114
 
 #check is $1 has been given. If it hasn't then explain the error, give teh proper usage, and exit with status 1
-if ! [[ -n "${1}" ]] ; then
+if [[ -z "${1}" ]] ; then
 	echo "No file name provided. Please provide a file to analyze"
 	echo
 	usage
@@ -33,8 +33,8 @@ EGAP=$( echo "scale=10 ; ${LUMO_EV} - ${HOMO_EV}" | bc )
 
 #get the electric dipole if it is present
 if grep -qi 'electric dipole' "${1}"  ; then
-	DIPOLE=($( grep -A 3 -Ei 'electric dipole' "${1}" | tail -n 1 ))
-	DIPOLE=${DIPOLE[2]/D/E}
+	DIPOLE_STRING=($( grep -A 3 -Ei 'electric dipole' "${1}" | tail -n 1 ))
+	DIPOLE=${DIPOLE_STRING[2]/D/E}
 else
 	DIPOLE='Not Calculated'
 fi
@@ -65,6 +65,6 @@ fi
 
 #output results
 echo "File,Method,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Dipole (Debye),Energy (au),S0 -> S1 (eV),f,S0 -> T1 (eV),f,deltaEst"
-echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}"
+echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${TOTAL_ENERGY},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}"
 
 exit 0
