@@ -49,6 +49,17 @@ else
 	METHOD=$( echo ${TOTAL_ENERGY_STRING} | grep -Eo '^[^[:space]]{1,}')
 fi
 
+#get excited state information
+#deteermine if excited state info present
+#then get excited state info 
+if grep -qi 'excitation energies and oscillator strengths:' ; then
+	SINGLET=($( grep -m 1 -Ei "excited state.{1,}singlet" ${1} ))
+	TRIPLET=($( grep -m 1 -Ei "excited state.{1,}triplet" ${1} ))
+else
+	SINGLET='Not calculated'
+	TRIPLET='Not calculated'
+fi	
+
 echo "File,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Dipole (Debye)"
 echo "$( basename ${1} ),${HOMO},${HOMO_EV},${LUMO[4]},${LUMO_EV},$( echo "scale=10 ; ${LUMO_EV} - ${HOMO_EV}" | bc ),${DIPOLE}"
 
