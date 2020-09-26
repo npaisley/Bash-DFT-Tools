@@ -19,6 +19,7 @@ if ! [[ -n "${1}" ]] ; then
 	exit 1
 fi
 
+
 #find the HOMO energy by searching for the last line with Alpha  occ. in it and taking the last string in the line
 HOMO=$( grep -Eio 'Alpha[[:space:]]{1,}occ.*' ${1} | tail -n 1 | grep -Eio '[^[:space:]]$' )
 HOMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${HOMO}" | bc )
