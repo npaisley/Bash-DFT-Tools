@@ -1,6 +1,6 @@
 # Bash DFT Tools
 Collection of bash shell scripts for use submitting jobs, making input files, and extracting information
-Designed to use on compute canada serveers that are running SLURM
+Designed to use on compute canada servers that are running SLURM.  
 
 Within the DFT_Sripts folder the following files are found:  
 [sg16submit-Mkx.x.x.x.sh](#sg16submitsh)  
