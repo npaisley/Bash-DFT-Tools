@@ -40,7 +40,7 @@ fi
 
 #find the total energy of the molecule and get the method used (this a convienent time to get this information)
 if grep -qi 'eump[0-9]' "${1}" ; then
-	TOTAL_ENERGY=$( grep -Eio 'eump[0-9]' "${1}" | tail -n 1 | grep -Eo '[^[:space:]]{1,}$' )
+	TOTAL_ENERGY=$( grep -Eio 'eump[0-9][[:space:]]{1,}=[[:space:]]{1,}([0-9]|-|D|\+|\.)*' "${1}" | tail -n 1 | grep -Eo '[^[:space:]]{1,}$' )
 	TOTAL_ENERGY=${TOTAL_ENERGY/D/E}
 	METHOD="$( grep -Eio 'E\((RO|R|U)HF\)' "${1}" | grep -Eio '(RO|R|U)' | tr -d '\n' )$( grep -Eio 'eump[0-9]' "${1}" | tail -n 1 | grep -Eoi 'mp[0-9]' )"
 else
