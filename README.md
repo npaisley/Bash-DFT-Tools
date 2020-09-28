@@ -7,7 +7,7 @@ Within the DFT_Sripts folder the following files are found:
 [multiComWriter.sh](#multicomwritersh)  
 [NTOcomwriter.sh](#ntocomwritersh)  
 [RSHOpt-Mkx.x.x.sh](#rshoptsh)  
-[valueExtractor-optfreq.sh](#valueExtractor-optfreqsh)    
+[valueExtractor.sh](#valueExtractorsh)    
 [gparse.sh](#gparsesh)  
 
 ## sg16submit.sh
@@ -21,7 +21,7 @@ Additionally, it writes a run script for gaussian 16 calculations. This allows f
 
 ## RSHOpt.sh  
 
-## valueExtractor-optfreq.sh    
+## valueExtractor.sh    
 Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files  
 
 ## gparse.sh
