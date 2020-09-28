@@ -7,14 +7,13 @@ Within the DFT_Sripts folder the following files are found:
 [multiComWriter.sh](#multicomwritersh)  
 [NTOcomwriter.sh](#ntocomwritersh)  
 [RSHOpt-Mkx.x.x.sh](#rshoptsh)  
-[valueExtractor-optfreq.sh](#valueExtractor-optfreqsh)  
-[valueExtractor-TDDFT.sh](#valueExtractor-tddftsh)  
+[valueExtractor-optfreq.sh](#valueExtractor-optfreqsh)    
 [gparse.sh](#gparsesh)  
 
 ## sg16submit.sh
 For use with SLURM  
 Reads your gaussian .com file and sets `sbatch` settings for you to avoid mistakes or the headache of doing it manually for many files. 
-Additionally, it wries a run script for gaussian 16 calculations. This allows for opt and freq calculations to be restarted by the script without your input
+Additionally, it writes a run script for gaussian 16 calculations. This allows for opt and freq calculations to be restarted by the script without your input
 
 ## multiComWriter.sh  
 
@@ -22,8 +21,7 @@ Additionally, it wries a run script for gaussian 16 calculations. This allows fo
 
 ## RSHOpt.sh  
 
-## valueExtractor-optfreq.sh  
-
-## valueExtractor-TDDFT.sh  
+## valueExtractor-optfreq.sh    
+Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files  
 
 ## gparse.sh
