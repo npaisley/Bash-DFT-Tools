@@ -31,8 +31,8 @@ Run using `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] [-s <script>] [
 ## RSHOpt.sh  
 
 ## valueExtractor.sh    
-Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files and outputs a comma separated string.  
-Run using `./valueExtractor.sh <log file>.log >> <file name>.csv` to generate a file that can be opened in excel.
-To analyze a batch of files use in a for loop (ex. ` for F in *.log ; do /valueExtractor.sh ${F} >> <file name>.csv ; done`)  
+Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files and outputs a comma separated string. The ouput can be directed to a file or to the command line. If ouput is directed to a file the header will only be printed once.  
+Run using `./valueExtractor.sh <log file>.log [<file name>.csv]`. The second argument is the ouput file. This is not required. 
+To analyze a batch of files use in a for loop (ex. ` for F in *.log ; do /valueExtractor.sh ${F} <file name>.csv ; done`)  
 
 ## gparse.sh
