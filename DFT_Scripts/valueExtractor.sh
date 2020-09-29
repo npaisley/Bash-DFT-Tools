@@ -21,14 +21,28 @@ fi
 
 #find the HOMO energy by searching for the last line with Alpha  occ. in it and taking the last string in the line
 HOMO=$( grep -Eio 'Alpha[[:space:]]{1,}occ.*' "${1}" | tail -n 1 | grep -Eio '[^[:space:]]{1,}$' )
-HOMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${HOMO}" | bc )
+if [[ -n ${HOMO} ]] ; then
+	HOMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${HOMO}" | bc )
+else
+	HOMO="not calculated"
+	HOMO_EV="not calculated"
+fi
 
 #find the LUMO energy by searching for the last line with Alpha  occ. and taking the line below it. Parse this line so that the first number used
 LUMO=$( grep -A 1 -Ei '^[[:space:]]{1,}Alpha[[:space:]]{1,}occ.' "${1}" | tail -n 1 | grep -Eio '^([[:space:]]|)([a-Z]|[[:space:]]|\.)*--([[:space:]]|-)*([0-9]|\.)*' | grep -Eio '[^[:space:]]{1,}$' )
-LUMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${LUMO}" | bc )
-
+if [[ -n ${LUMO} ]]
+	LUMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${LUMO}" | bc )
+else
+	LUMO="not calculated"
+	LUMO_EV="not calculated"
+fi
+	
 #calculate the HOMO LUMO gap
-EGAP=$( echo "scale=10 ; ${LUMO_EV} - ${HOMO_EV}" | bc )
+if [[ ${LUMO} != "not calculated" ]] && [[ ${HOMO} != "not calculated" ]] ; then
+	EGAP=$( echo "scale=10 ; ${LUMO_EV} - ${HOMO_EV}" | bc )
+else
+	EGAP="not calculated"
+fi
 
 #get the electric dipole if it is present
 if grep -qi 'electric dipole' "${1}"  ; then
