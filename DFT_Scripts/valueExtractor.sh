@@ -81,6 +81,9 @@ fi
 
 #output results to file or command line
 if [[ -n "${2}" ]] ; then
+	if [[ ! -f "${2}" ]] ; then
+		touch "${2}"
+	fi
 	if grep -q "${HEADER}" "${2}" ; then
 		echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${TOTAL_ENERGY},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}" >> "${2}"
 	else
