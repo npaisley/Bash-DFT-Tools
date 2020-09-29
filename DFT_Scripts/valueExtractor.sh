@@ -30,7 +30,7 @@ fi
 
 #find the LUMO energy by searching for the last line with Alpha  occ. and taking the line below it. Parse this line so that the first number used
 LUMO=$( grep -A 1 -Ei '^[[:space:]]{1,}Alpha[[:space:]]{1,}occ.' "${1}" | tail -n 1 | grep -Eio '^([[:space:]]|)([a-Z]|[[:space:]]|\.)*--([[:space:]]|-)*([0-9]|\.)*' | grep -Eio '[^[:space:]]{1,}$' )
-if [[ -n ${LUMO} ]]
+if [[ -n ${LUMO} ]] ; then
 	LUMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${LUMO}" | bc )
 else
 	LUMO="not calculated"
