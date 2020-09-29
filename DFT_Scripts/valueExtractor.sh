@@ -1,17 +1,20 @@
 #!/bin/bash
 #this script extracts the homo, lumo, total energy, and first singlet and triplet excited state energies from Gaussian calculations
+#2020, Nathan R. Paisley
 
 usage () {
-	echo "run with: ./<script>.sh <log file>.log >> <file name>.csv"
-	echo ">> <file name>.csv is used to append output to a file that can be opened with excel"
-	echo "run in a for loop when analysing many calculations"
+	echo "run with: ./<script>.sh <log file>.log <ouput file name>.csv"
+	echo "An output file is optional. If left unspecified the script will output results to the command line."
+	echo "run in a for loop when analysing many calculations."
+	echo "The header is only printed when it is not present in the specified output file (doesn't work with output redirection)"
 	echo
 }
 
-#conversions factors
+#variables
 HA_TO_EV=27.2114
+HEADER="File,Method,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Dipole (Debye),Energy (au),S0 -> S1 (eV),f,S0 -> T1 (eV),f,deltaEst"
 
-#check is $1 has been given. If it hasn't then explain the error, give teh proper usage, and exit with status 1
+#check is $1 has been given. If it hasn't then explain the error, give the proper usage, and exit with status 1
 if [[ -z "${1}" ]] ; then
 	echo "No file name provided. Please provide a file to analyze"
 	echo
@@ -76,8 +79,17 @@ else
 	DELTAEST="Not calculated"
 fi	
 
-#output results
-echo "File,Method,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Dipole (Debye),Energy (au),S0 -> S1 (eV),f,S0 -> T1 (eV),f,deltaEst"
-echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${TOTAL_ENERGY},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}"
+#output results to file or command line
+if [[ -n "${2}" ]] ; then
+	if grep -q "${HEADER}" "${2}" ; then
+		echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${TOTAL_ENERGY},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}" >> "${2}"
+	else
+		echo "${HEADER}" >> "${2}"
+		echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${TOTAL_ENERGY},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}" >> "${2}"
+	fi
+else
+	echo "${HEADER}"
+	echo "$( basename "${1}" ),${METHOD},${HOMO},${HOMO_EV},${LUMO},${LUMO_EV},${EGAP},${DIPOLE},${TOTAL_ENERGY},${SINGLET[4]},${SINGLET[8]},${TRIPLET[4]},${TRIPLET[8]},${DELTAEST}"
+fi
 
 exit 0
