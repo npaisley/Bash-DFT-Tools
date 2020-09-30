@@ -3,22 +3,24 @@
 #requires one argument
 #can be run in for loops to do many files
 #xyz coordinates and basis set are in input file
+## add usage function and print when no file name given
 
 ### Parameters ###
+## organize this section better
 ## add example parameters section
-Route="/gen pseudo=read scf=xqc"
-BASIS_SET=("6-31G(d)")
-DFT_CALC=("SP" "TDA" "TD") #calculations to run (ex. TD, TDA, opt, freq, opt freq, sp, etc.)
+ROUTE="pseudo=read scf=xqc"
+BASIS_SET=("6-31G(d)" "gen")
+DFT_CALC=("SP" "TDA=(50-50,nstates=10)" "TD=(50-50,nstates=10)") #calculations to run (ex. TD, TDA, opt, freq, opt freq, sp, etc.)
 AB_CALC=("SP")
+#AB_CALC=(${DFT_CALC[@]}) #uncomment this line and comment the one above to make AB and DFT calculations equivalent
 DFT_SPIN_TREATMENT=("R" "RO" "U") #list of spin treatments (ex. restricted (R), restricted open (RO), and unrestricted (U))
 AB_SPIN_TREATMENT=("R" "RO" "U")
+#AB_SPIN_TREATMENT=(${DFT_SPIN_TREATMENTS[@]}) #uncomment this line and comment the one above to make AB and DFT spin treatments equivalent
 AB_METHODS=("HF" "MP2") #ab initio methods
 DFT_METHODS=("B3LYP" "LC-WHPBE" "CAM-B3LYP") #DFT methods (functionals)
 DFT_CHARGE_MULTIPLICITY=("0 1" "0 3") #list charge and multiplicities here (ex. 0 1, 0 3, etc.)
-##add commented line that sets AB same as DFT (can be commented and uncommented as needed)
 AB_CHARGE_MULTIPLICITY=("0 1" "0 3") #list charge and multiplicities here (ex. 0 1, 0 3, etc.)
-##remove this. it makes more sense to just integrate it with the calculation type array
-TDDFT_ROUTE="(50-50,nstates=10)" #TD(or TDA) DFT settings
+#AB_CHARGE_MULTIPLICITY=(${DFT_CHARGE_MULTIPLICITY[@]}) #uncomment this line and comment the one above to make AB and DFT charge and multiplicities equivalent
 ######
 
 com_writer () {
@@ -50,11 +52,14 @@ if [[ -z ${1} ]] ; then
 	exit 1
 fi
 
-#define file name
+#assign full xyz file name and name without the extension
 FILE_NAME=${1%.*} #remove file extension
 FILE_NAME_FULL=${1}
 
+##completely rewrite
+##have separate potrions for DFT and AB methods
 #make route and write com file
+
 #assign charge and multiplicity and file name suffix according to method
 for T in ${CALC_TYPE[@]} ; do
 	if [[ ${T} == "SP" ]] ; then #do for all methods
