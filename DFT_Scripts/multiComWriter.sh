@@ -3,9 +3,23 @@
 #requires one argument
 #can be run in for loops to do many files
 #xyz coordinates and basis set are in input file
-### Route ###
-Route=""
-### Etour ###
+
+### Parameters ###
+## add example parameters section
+Route="/gen pseudo=read scf=xqc"
+BASIS_SET=("6-31G(d)")
+DFT_CALC=("SP" "TDA" "TD") #calculations to run (ex. TD, TDA, opt, freq, opt freq, sp, etc.)
+AB_CALC=("SP")
+DFT_SPIN_TREATMENT=("R" "RO" "U") #list of spin treatments (ex. restricted (R), restricted open (RO), and unrestricted (U))
+AB_SPIN_TREATMENT=("R" "RO" "U")
+AB_METHODS=("HF" "MP2") #ab initio methods
+DFT_METHODS=("B3LYP" "LC-WHPBE" "CAM-B3LYP") #DFT methods (functionals)
+DFT_CHARGE_MULTIPLICITY=("0 1" "0 3") #list charge and multiplicities here (ex. 0 1, 0 3, etc.)
+##add commented line that sets AB same as DFT (can be commented and uncommented as needed)
+AB_CHARGE_MULTIPLICITY=("0 1" "0 3") #list charge and multiplicities here (ex. 0 1, 0 3, etc.)
+##remove this. it makes more sense to just integrate it with the calculation type array
+TDDFT_ROUTE="(50-50,nstates=10)" #TD(or TDA) DFT settings
+######
 
 com_writer () {
 # $1 is the xyz file
@@ -39,16 +53,6 @@ fi
 #define file name
 FILE_NAME=${1%.*} #remove file extension
 FILE_NAME_FULL=${1}
-
-#list of calculation types, spin treatmetns, and methods
-#methods are split into ab initio and dft
-CALC_TYPE=("SP" "TDA" "TD")
-SPIN_TREATMENT=("R" "RO" "U")
-AB_METHODS=("HF" "MP2")
-DFT_METHODS=("B3LYP" "LC-WHPBE" "CAM-B3LYP")
-
-#TD(or TDA) DFT settings
-TDDFT_ROUTE="(50-50,nstates=10)"
 
 #make route and write com file
 #assign charge and multiplicity and file name suffix according to method
