@@ -3,6 +3,9 @@
 #requires one argument
 #can be run in for loops to do many files
 #xyz coordinates and basis set are in input file
+### Route ###
+Route=""
+### Etour ###
 
 com_writer () {
 # $1 is the xyz file
