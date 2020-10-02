@@ -52,7 +52,7 @@ for CALC in ${2} ; do
 						FULL_ROUTE="${CALC} ${SPIN}${METHOD}/${BASIS} ${ROUTE}"
 						FULL_METHOD="${SPIN}${METHOD}"
 
-cat #<< EOF > "${1}"-"${FULL_METHOD}".com
+cat << EOF > "${1}"-"${FULL_METHOD}".com
 %rwf="${1}"-"${FULL_METHOD}".rwf
 %nosave
 %chk="${1}"-"${FULL_METHOD}".chk
@@ -63,7 +63,7 @@ cat #<< EOF > "${1}"-"${FULL_METHOD}".com
 "${1}" (cm="${CM}") with "${FULL_ROUTE}"
 
 "${CM}"
-$( cat ${FILE_NAME_FULL} )
+$( cat "${FILE_NAME_FULL}" )
 
 
 EOF
@@ -87,12 +87,12 @@ FILE_NAME=${1%.*} #remove file extension
 FILE_NAME_FULL=${1}
 
 #DFT section
-if [[ -n ${DFT_CALC[@]} ]] ; then
+if [[ -n ${DFT_CALC[1]} ]] ; then
 	com_writer "${FILE_NAME}" "${DFT_CALC[@]}" "${DFT_METHOD[@]}" "${DFT_SPIN_TREATMENT[@]}" "${BASIS_SET[@]}" "${ROUTE_PARAMETERS[@]}" "${DFT_CHARGE_MULTIPLICITY[@]}" "${MEMORY}" "${CPUS}"
 fi
 
 #ab section
-if [[ -n ${AB_CALC[@]}]]
+if [[ -n ${AB_CALC[1]} ]] ; then
 	com_writer "${FILE_NAME}" "${AB_CALC[@]}" "${AB_METHOD[@]}" "${AB_SPIN_TREATMENT[@]}" "${BASIS_SET[@]}" "${ROUTE_PARAMETERS[@]}" "${AB_CHARGE_MULTIPLICITY[@]}" "${MEMORY}" "${CPUS}"
 fi
 
