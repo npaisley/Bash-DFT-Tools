@@ -88,7 +88,7 @@ FILE_NAME_FULL=${1}
 
 #DFT section
 if [[ -n ${DFT_CALC[1]} ]] ; then
-	com_writer "${FILE_NAME}" "${DFT_CALC[@]}" "${DFT_METHOD[@]}" "${DFT_SPIN_TREATMENT[@]}" "${BASIS_SET[@]}" "${ROUTE_PARAMETERS[@]}" "${DFT_CHARGE_MULTIPLICITY[@]}" "${MEMORY}" "${CPUS}"
+	com_writer "${FILE_NAME}" "(${DFT_CALC[@]})" "(${DFT_METHOD[@]})" "(${DFT_SPIN_TREATMENT[@]})" "(${BASIS_SET[@]})" "(${ROUTE_PARAMETERS[@]})" "(${DFT_CHARGE_MULTIPLICITY[@]})" "${MEMORY}" "${CPUS}"
 fi
 
 #ab section
