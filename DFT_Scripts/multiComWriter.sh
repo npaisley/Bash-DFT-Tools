@@ -10,9 +10,9 @@ AB_CALC=("SP" "opt")
 #AB_CALC=(${DFT_CALC[@]}) #uncomment this line and comment the one above to make AB and DFT calculations equivalent
 AB_METHOD=("HF" "MP2") #ab initio methods
 DFT_METHOD=("B3LYP" "LC-WHPBE" "CAM-B3LYP") #DFT methods (functionals)
-DFT_SPIN_TREATMENT=("R" "RO" "U") #list of spin treatments (ex. restricted (R), restricted open (RO), and unrestricted (U))
-AB_SPIN_TREATMENT=("R" "RO" "U")
-#AB_SPIN_TREATMENT=(${DFT_SPIN_TREATMENTS[@]}) #uncomment this line and comment the one above to make AB and DFT spin treatments equivalent
+DFT_ORBITAL_SYMMETRY=("R" "RO" "U") #list of orbital symmetries (ex. restricted (R), restricted open (RO), and unrestricted (U))
+AB_ORBITAL_SYMMETRY=("R" "RO" "U")
+#AB_ORBITAL_SYMMETRY=(${DFT_ORBITAL_SYMMETRY[@]}) #uncomment this line and comment the one above to make AB and DFT orbital symmetries equivalent
 BASIS_SET=("6-31G(d)" "gen pseudo=read")
 ROUTE_PARAMETERS=("scf=xqc" "geom=check guess=read")
 DFT_CHARGE_MULTIPLICITY=("0 1" "0 3") #list charge and multiplicities here (ex. 0 1, 0 3, etc.)
@@ -30,49 +30,25 @@ usage (){
 }
 
 com_writer () {
-#$1 xyz file
-#$2 calc type
-#$3 method
-#$4 spin treatment
-#$5 basis
-#$6 route parameters
-#$7 charge and multiplicity
-#$8 memory
-#$9 cpus
-
-
-
-
-for CALC in ${2} ; do
-	for METHOD in ${3} ; do
-		for SPIN in ${4} ; do
-			for BASIS in ${5} ; do
-				for ROUTE in ${6} ; do
-					for CM in ${7} ; do
-						FULL_ROUTE="${CALC} ${SPIN}${METHOD}/${BASIS} ${ROUTE}"
-						FULL_METHOD="${SPIN}${METHOD}"
-
-cat << EOF > "${1}"-"${FULL_METHOD}".com
-%rwf="${1}"-"${FULL_METHOD}".rwf
+# 1 full method
+# 2 full route
+# 3 charge and multiplicity
+cat << EOF > "${FILE_NAME}"-"${C}"-"${FULL_METHOD}".com
+%rwf=${FILE_NAME}-${1}.rwf
 %nosave
-%chk="${1}"-"${FULL_METHOD}".chk
-%mem="${MEMORY}"
-%nprocshared="${CPUS}"
-#"${FULL_ROUTE}"
+%chk=${FILE_NAME}-${1}.chk
+%mem=${MEMORY}
+%nprocshared=${CPUS}
+# ${3}
 
-"${1}" (cm="${CM}") with "${FULL_ROUTE}"
+${FILE_NAME} (cm=${3}) with ${3}
 
-"${CM}"
-$( cat "${FILE_NAME_FULL}" )
+${4}
+$( cat ${FILE_NAME_FULL} )
 
 
 EOF
-					done
-				done
-			done
-		done
-	done
-done
+
 }
 
 #make sure file name is provided. if it isnt then exit with an error message
@@ -86,14 +62,42 @@ fi
 FILE_NAME=${1%.*} #remove file extension
 FILE_NAME_FULL=${1}
 
-#DFT section
+#DFT com writing
 if [[ -n ${DFT_CALC[1]} ]] ; then
-	com_writer "${FILE_NAME}" "(${DFT_CALC[@]})" "(${DFT_METHOD[@]})" "(${DFT_SPIN_TREATMENT[@]})" "(${BASIS_SET[@]})" "(${ROUTE_PARAMETERS[@]})" "(${DFT_CHARGE_MULTIPLICITY[@]})" "${MEMORY}" "${CPUS}"
+	for C in ${DFT_CALC[@]} ; do
+	for M in ${DFT_METHOD[@]} ; do
+		for S in ${DFT_ORBITAL_SYMMETRY[@]} ; do
+			for B in ${BASIS_SET[@]} ; do
+				for R in ${ROUTE_PARAMETERS[@]} ; do
+					for CM in ${DFT_CHARGE_MULTIPLICITY[@]} ; do
+						FULL_ROUTE="${C} ${S}${M}/${B} ${R}"
+						FULL_METHOD="${S}${M}"
+						com_writer "${FULL_METHOD}" "${C}" "${FULL_ROUTE}" "${CM}"
+					done
+				done
+			done
+		done
+	done
+done
 fi
 
-#ab section
+#AB com writing
 if [[ -n ${AB_CALC[1]} ]] ; then
-	com_writer "${FILE_NAME}" "${AB_CALC[@]}" "${AB_METHOD[@]}" "${AB_SPIN_TREATMENT[@]}" "${BASIS_SET[@]}" "${ROUTE_PARAMETERS[@]}" "${AB_CHARGE_MULTIPLICITY[@]}" "${MEMORY}" "${CPUS}"
+	for C in ${AB_CALC[@]} ; do
+	for M in ${AB_METHOD[@]} ; do
+		for S in ${AB_ORBITAL_SYMMETRY[@]} ; do
+			for B in ${BASIS_SET[@]} ; do
+				for R in ${ROUTE_PARAMETERS[@]} ; do
+					for CM in ${DFT_CHARGE_MULTIPLICITY[@]} ; do
+						FULL_ROUTE="${C} ${S}${M}/${B} ${R}"
+						FULL_METHOD="${S}${M}"
+						com_writer "${FULL_METHOD}" "${FULL_ROUTE}" "${CM}"
+					done
+				done
+			done
+		done
+	done
+done
 fi
 
 exit 0
