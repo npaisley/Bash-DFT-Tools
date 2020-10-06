@@ -53,7 +53,7 @@ if grep -q -Ei 'Beta[[:space:]]{1,}occ.*' "${1}" ; then
 		LUMO=${LUMO_ALPHA}
 	fi
 else
-	HOMO=${LUMO_ALPHA}
+	LUMO=${LUMO_ALPHA}
 fi	
 if [[ -n ${LUMO} ]] ; then
 	LUMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${LUMO}" | bc )
