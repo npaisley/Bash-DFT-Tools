@@ -23,7 +23,18 @@ if [[ -z "${1}" ]] ; then
 fi
 
 #find the HOMO energy by searching for the last line with Alpha  occ. in it and taking the last string in the line
-HOMO=$( grep -Eio 'Alpha[[:space:]]{1,}occ.*' "${1}" | tail -n 1 | grep -Eio '[^[:space:]]{1,}$' )
+#repeat this for beta orbitals if they are present and find the highest energy one. That is the HOMO energy.
+HOMO_ALPHA=$( grep -Eio 'Alpha[[:space:]]{1,}occ.*' "${1}" | tail -n 1 | grep -Eio '[^[:space:]]{1,}$' )
+if grep -q -Ei 'Beta[[:space:]]{1,}occ.*' "${1}" ; then
+	HOMO_BETA=$( grep -Eio 'Beta[[:space:]]{1,}occ.*' "${1}" | tail -n 1 | grep -Eio '[^[:space:]]{1,}$' )
+	if [[ $( echo "${HOMO_BETA}>${HOMO_ALPHA}" | bc ) -gt 0 ]] ; then 
+		HOMO=${HOMO_BETA}
+	else
+		HOMO=${HOMO_ALPHA}
+	fi
+else
+	HOMO=${HOMO_ALPHA}
+fi	
 if [[ -n ${HOMO} ]] ; then
 	HOMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${HOMO}" | bc )
 else
@@ -32,7 +43,18 @@ else
 fi
 
 #find the LUMO energy by searching for the last line with Alpha  occ. and taking the line below it. Parse this line so that the first number used
-LUMO=$( grep -A 1 -Ei '^[[:space:]]{1,}Alpha[[:space:]]{1,}occ.' "${1}" | tail -n 1 | grep -Eio '^([[:space:]]|)([a-Z]|[[:space:]]|\.)*--([[:space:]]|-)*([0-9]|\.)*' | grep -Eio '[^[:space:]]{1,}$' )
+#repeat this if beta orbitals are found. Find the lowest energy one, that is the LUMO energy.
+LUMO_ALPHA=$( grep -A 1 -Ei '^[[:space:]]{1,}Alpha[[:space:]]{1,}occ.' "${1}" | tail -n 1 | grep -Eio '^([[:space:]]|)([a-Z]|[[:space:]]|\.)*--([[:space:]]|-)*([0-9]|\.)*' | grep -Eio '[^[:space:]]{1,}$' )
+if grep -q -Ei 'Beta[[:space:]]{1,}occ.*' "${1}" ; then
+	LUMO_BETA=$( grep -A 1 -Ei '^[[:space:]]{1,}Beta[[:space:]]{1,}occ.' "${1}" | tail -n 1 | grep -Eio '^([[:space:]]|)([a-Z]|[[:space:]]|\.)*--([[:space:]]|-)*([0-9]|\.)*' | grep -Eio '[^[:space:]]{1,}$' )
+	if [[ $( echo "${LUMO_BETA}<${LUMO_ALPHA}" | bc ) -gt 0 ]] ; then 
+		LUMO=${LUMO_BETA}
+	else
+		LUMO=${LUMO_ALPHA}
+	fi
+else
+	HOMO=${LUMO_ALPHA}
+fi	
 if [[ -n ${LUMO} ]] ; then
 	LUMO_EV=$( echo "scale=10 ; ${HA_TO_EV} * ${LUMO}" | bc )
 else
