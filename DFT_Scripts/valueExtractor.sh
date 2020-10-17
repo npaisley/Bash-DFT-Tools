@@ -22,6 +22,9 @@ if [[ -z "${1}" ]] ; then
 	exit 1
 fi
 
+#search for errors here and report them to the user
+#if an error is encountered still collect data but have a warning that the data is unuseable
+
 #find the HOMO energy by searching for the last line with Alpha  occ. in it and taking the last string in the line
 #repeat this for beta orbitals if they are present and find the highest energy one. That is the HOMO energy.
 HOMO_ALPHA=$( grep -Eio 'Alpha[[:space:]]{1,}occ.*' "${1}" | tail -n 1 | grep -Eio '[^[:space:]]{1,}$' )
