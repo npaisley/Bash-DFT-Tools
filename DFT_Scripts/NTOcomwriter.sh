@@ -7,11 +7,11 @@
 FILE=${1%.*}
 
 RWF=$( grep %rwf ${FILE}.com )
-RWF=${RWF%*.rwf}
+RWF=${RWF%.rwf*}
 
 CHK=$( grep %chk ${FILE}.com )
 OLDCHK=${CHK#%chk*}
-CHK=${CHK%.chk}
+CHK=${CHK%.chk*}
 for S in Singlet Triplet ; do
 	STATE=($( grep -m1 ${S} ${FILE}.log ))
 	STATE=${STATE[2]//:/}
