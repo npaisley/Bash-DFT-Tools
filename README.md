@@ -9,6 +9,8 @@ Within the DFT_Sripts folder the following files are found:
 [RSHOpt-Mkx.x.x.sh](#rshoptsh)  
 [valueExtractor.sh](#valueextractorsh)    
 [gparse.sh](#gparsesh)  
+[qstat.sh](#qstatsh)  
+[renderPovrayGraham.sh](#renderpovraygrahamsh)  
 
 ## sg16submit.sh
 For use with SLURM  
@@ -35,4 +37,8 @@ Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian 
 Run using `./valueExtractor.sh <log file>.log [<file name>.csv]`. The second argument is the ouput file. This is not required. 
 To analyze a batch of files use in a for loop (ex. ` for F in *.log ; do /valueExtractor.sh ${F} <file name>.csv ; done`)  
 
-## gparse.sh
+## gparse.sh  
+
+## qstat.sh  
+
+## renderPovrayGraham.sh
