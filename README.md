@@ -44,7 +44,7 @@ To analyze a batch of files use in a for loop (ex. ` for F in *.log ; do /valueE
 ## renderPovrayGraham.sh
 
 ## Memory Tips  
-When making your gaussian input file you should choose an amout of memory that fits the server architecture available to you. For [Graham](https://docs.computecanada.ca/wiki/Graham) this is as follows:  
+When making your gaussian input file you should choose an amout of memory that fits the server architecture available to you (remember that the sg16submit script adds 2 G of memory to your requested amount). For [Graham](https://docs.computecanada.ca/wiki/Graham) this is as follows:  
 903 nodes with 32 cores and 3.9 G per core  
 24 nodes with 32 cores and 15.7 G per core  
 56 nodes with 32 cores and 7.8 G per core  
