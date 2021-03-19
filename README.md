@@ -1,5 +1,5 @@
 # Bash DFT Tools
-This is a collection of bash shell scripts for submitting jobs, making input files, and extracting data from completed calculations. They were designed for use on compute canada servers that are running SLURM. I have not tested them on other systems so they may or may not work in such senarios. In addition to these scripts I have also included a troubleshooting document with problems that I have encountered and their respective solutions. The trobleshooting document and this readme are formatted using markdown (.md file extension) and are therefore most easily viewed using a markdown capable editor (there is a extension for word that does this) or by viewing them on the Github website.  
+This is a collection of bash shell scripts for submitting jobs, making input files, and extracting data from completed calculations. They were designed for use on compute canada servers that are running SLURM. I have not tested them on other systems so they may or may not work in such senarios. In addition to these scripts I have also included a troubleshooting document with problems that I have encountered and their respective solutions. The trobleshooting document and this readme are formatted using markdown (.md file extension) and are therefore most easily viewed using a markdown editor (such as [Typora](https://typora.io/)) or more simply by viewing them on the [Github](https://github.com/npaisley/Bash-DFT-Tools) website.  
 
 Within the DFT_Sripts folder the following files are found:  
 [sg16submit-Mkx.x.x.x.sh](#sg16submitsh)  
@@ -12,18 +12,24 @@ Within the DFT_Sripts folder the following files are found:
 [renderPovrayGraham.sh](#renderpovraygrahamsh)  
 
 ## sg16submit.sh
-Reads your gaussian input file (.com file) and sets `sbatch` arguments for you. This helps avoid mistakes and saves time when submitting multiple calculations.  This is the only file required when submitting gaussian calculations as the Gaussian 16 run script will be written if it is not found in the same folder as this submission script. Additionally, the wall time is passed on to the run script so that long running calulations can be automatically resubmitted and restarted. This currently only work with opt and freq calculations. It is currently disabled (even with the `-r` argument) for TD-DFT calulations as an error occurs with the employed method of restarting calulations and the calulations has to be started fresh. An email stating that the calculation ended with exit code 77 indicates that the calculation was resubmitted to SLURM successfully. An exit code of 66 indicates unsuccessful resubmission. All other exit codes are from the calculation itself.  
-Run using `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] [-s <script>] [-r] [-h] [-T] [-E]`
+Reads your gaussian input file (.com file) and sets `sbatch` arguments for you. This helps avoid mistakes and saves time when submitting multiple calculations. This is the only file required when submitting gaussian calculations as all other required files will be written by this script. The `-r` argument requests that calculations automatically be requeued upon reaching their wall-time.  
+**NOTE:** This run script is intended to be used in the same folder as your gaussian input file.
+
+as the Gaussian 16 run script will be written if it is not found in the same folder as this submission script. When run for the first time a dialg will appear that asks you to input your email. This is required for calculations status update emails. Additionally, the wall time is passed on to the run script so that long running calulations can be automatically resubmitted and restarted. This currently only work with opt and freq calculations. It is currently disabled (even with the `-r` argument) for TD-DFT calulations as an error occurs with the employed method of restarting calulations and the calulations has to be started fresh. An email stating that the calculation ended with exit code 77 indicates that the calculation was resubmitted to SLURM successfully. An exit code of 66 indicates unsuccessful resubmission. All other exit codes are from the calculation itself.   
+
+Run using:  
+ `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] [-s <script>] [-r] [-h] [-T] [-E]`
 
 `-f` designates the .com file to be used and is the only required argument  
 `-t` requests a temporary, non-default, walltime be used  
-`-s` requests for a named alternative script to be used  
-`-r` requests that the calculation be set to requeue itself upon timeout. This only works with the default script  
+`-s` requests that a non-default run script be used  
+`-r` requests that the calculation requeue itself upon reaching its wall-time. This only works with the default script  
 `-h` displays the help information  
-`-T` changes the default time  
+`-T` changes the default wall-time  
 `-E` changes the email notifications are sent to  
-
-**NOTE:** This run script is intended to be used in the same folder as your gaussian input file.  
+### First run
+### Restart
+  
 
 ## multiComWriter.sh  
 
