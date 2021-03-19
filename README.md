@@ -13,9 +13,7 @@ Within the DFT_Sripts folder the following files are found:
 
 ## sg16submit.sh
 Reads your gaussian input file (.com file) and sets `sbatch` arguments for you. This helps avoid mistakes and saves time when submitting multiple calculations. This is the only file required when submitting gaussian calculations as all other required files will be written by this script. The `-r` argument requests that calculations automatically be requeued upon reaching their wall-time.  
-**NOTE:** This run script is intended to be used in the same folder as your gaussian input file.
-
-as the Gaussian 16 run script will be written if it is not found in the same folder as this submission script. When run for the first time a dialg will appear that asks you to input your email. This is required for calculations status update emails. Additionally, the wall time is passed on to the run script so that long running calulations can be automatically resubmitted and restarted. This currently only work with opt and freq calculations. It is currently disabled (even with the `-r` argument) for TD-DFT calulations as an error occurs with the employed method of restarting calulations and the calulations has to be started fresh. An email stating that the calculation ended with exit code 77 indicates that the calculation was resubmitted to SLURM successfully. An exit code of 66 indicates unsuccessful resubmission. All other exit codes are from the calculation itself.   
+**NOTE:** This run script is intended to be used in the same folder as your gaussian input file.  
 
 Run using:  
  `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] [-s <script>] [-r] [-h] [-T] [-E]`
@@ -27,9 +25,15 @@ Run using:
 `-h` displays the help information  
 `-T` changes the default wall-time  
 `-E` changes the email notifications are sent to  
-### First run
+
+### General Infomation
+The Gaussian 16 run script will be written if it is not found in the same folder as this submission script.  
+
+### First Run
+When run for the first time a dialg will appear that asks you to input your email. This is required for notifications (via email) regarding the status of your calculations. Additonally, a file named sg16log will be made in your home directory (/home/\<username\>). Inside is a log file containing the values for the wall-time, your email, and information regarding every calculation submitted by this script or the defualt run script.  
+
 ### Restart
-  
+The wall-time is passed on to the run script so that long running calulations can be automatically resubmitted and restarted. This currently only work with opt and freq calculations. It is currently disabled (even with the `-r` argument) for TD-DFT calulations as an error occurs with the employed method of restarting calulations and the calulations has to be started fresh. An email stating that the calculation ended with exit code 77 indicates that the calculation was resubmitted to SLURM successfully. An exit code of 66 indicates unsuccessful resubmission. All other exit codes are from the calculation itself.  
 
 ## multiComWriter.sh  
 
@@ -39,8 +43,9 @@ Run using:
 
 ## valueExtractor.sh    
 Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files and outputs a comma separated string. The ouput can be directed to a file or to the command line. If ouput is directed to a file the header will only be printed once.  
+
 Run using `./valueExtractor.sh <log file>.log [<file name>.csv]`. The second argument is the ouput file. This is not required. 
-To analyze a batch of files use in a for loop (ex. ` for F in *.log ; do /valueExtractor.sh ${F} <file name>.csv ; done`)  
+To analyze a batch of files in a for loop use in the following fashion: ` for F in *.log ; do /valueExtractor.sh ${F} <file name>.csv ; done`  
 
 ## gparse.sh  
 
@@ -48,7 +53,8 @@ To analyze a batch of files use in a for loop (ex. ` for F in *.log ; do /valueE
 
 ## renderPovrayGraham.sh
 
-## Memory Tips  
+## Tips  
+### Memory  
 When making your gaussian input file you should choose an amout of memory that fits the server architecture available to you (remember that the sg16submit script adds 2 G of memory to your requested amount). For [Graham](https://docs.computecanada.ca/wiki/Graham) this is as follows:  
 903 nodes with 32 cores and 3.9 G per core  
 24 nodes with 32 cores and 15.7 G per core  
