@@ -12,9 +12,7 @@ Within the DFT_Sripts folder the following files are found:
 [renderPovrayGraham.sh](#renderpovraygrahamsh)  
 
 ## sg16submit.sh
-For use with SLURM  
-Reads your gaussian .com file and sets `sbatch` settings for you to avoid mistakes or the headache of doing it manually for many files. 
-Additionally, it writes a run script for gaussian 16 calculations. This allows for opt and freq calculations to be restarted by the script without your input.    
+Reads your gaussian input file (.com file) and sets `sbatch` arguments for you. This helps avoid mistakes and saves time when submitting multiple calculations.  This is the only file required when submitting gaussian calculations as the Gaussian 16 run script will be written if it is not found in the same folder as this submission script. Additionally, the wall time is passed on to the run script so that long running calulations can be automatically resubmitted and restarted. This currently only work with opt and freq calculations. It is currently disabled (even with the `-r` argument) for TD-DFT calulations as an error occurs with the employed method of restarting calulations and the calulations has to be started fresh. An email stating that the calculation ended with exit code 77 indicates that the calculation was resubmitted to SLURM successfully. An exit code of 66 indicates unsuccessful resubmission. All other exit codes are from the calculation itself.  
 Run using `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] [-s <script>] [-r] [-h] [-T] [-E]`
 
 `-f` designates the .com file to be used and is the only required argument  
@@ -24,6 +22,8 @@ Run using `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] [-s <script>] [
 `-h` displays the help information  
 `-T` changes the default time  
 `-E` changes the email notifications are sent to  
+
+**NOTE:** This run script is intended to be used in the same folder as your gaussian input file.  
 
 ## multiComWriter.sh  
 
