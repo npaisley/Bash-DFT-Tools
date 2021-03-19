@@ -27,7 +27,8 @@ Run using:
 `-E` changes the email notifications are sent to  
 
 ### General Infomation
-The Gaussian 16 run script will be written if it is not found in the same folder as this submission script.  
+- The Gaussian 16 run script will be written if it is not found in the same folder as this submission script.  
+- 2 GB more memory than is specified in the input file is requested from SLURM. This is done because Gaussian typically uses 1 - 2 GB more memory than it is told it has in the input file. If more memory than "needed" is not requested than Gaussian will run out of memory and the calculation will error out.  
 
 ### First Run
 When run for the first time a dialg will appear that asks you to input your email. This is required for notifications (via email) regarding the status of your calculations. Additonally, a file named sg16log will be made in your home directory (/home/\<username\>). Inside is a log file containing the values for the wall-time, your email, and information regarding every calculation submitted by this script or the defualt run script.  
@@ -55,9 +56,14 @@ To analyze a batch of files in a for loop use in the following fashion: ` for F 
 
 ## Tips  
 ### Memory  
-When making your gaussian input file you should choose an amout of memory that fits the server architecture available to you (remember that the sg16submit script adds 2 G of memory to your requested amount). For [Graham](https://docs.computecanada.ca/wiki/Graham) this is as follows:  
-903 nodes with 32 cores and 3.9 G per core  
-24 nodes with 32 cores and 15.7 G per core  
-56 nodes with 32 cores and 7.8 G per core  
-3 nodes with 64 cores and 47.2 G per core  
-72 nodes with 44 cores and 4.4 G per core  
+When making your gaussian input file you should choose an amout of memory that fits the server architecture available to you. For [Graham](https://docs.computecanada.ca/wiki/Graham) this is as follows:  
+
+| Number of Nodes | Cores per node | Memory per node (G) | Approximate G/core |
+|---|---|---|---|
+| 903 | 32 | 125   | 3.9  |
+| 24  | 32 | 502   | 15.7 |
+| 56  | 32 | 250   | 7.8  |
+| 3   | 64 | 3022  | 47.2 |
+| 72  | 44 | 192   | 4.4  |
+ 
+**Remember:** The sg16submit.sh script requests 2 G more memory from SLURM than is specified in your input file.  
