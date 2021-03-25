@@ -20,7 +20,7 @@
 # add command option to print last x number of submitted jobs (filename jobid)
 # improve formatting of text sent to log fle (on going)
 # Write all log output to temp file (use TEMP=$( mktemp )) and then write to log all at once (https://unix.stackexchange.com/questions/181937/how-create-a-temporary-file-in-shell-script)
-# recognize what kind of calculation has been run and if the fob completes summarize important info (ex. if structure if converged for opt and freq)
+# recognize what kind of calculation has been run and if the job completes summarize important info (ex. if structure if converged for opt and freq)
 ######
 
 ### STUFF ###
@@ -39,7 +39,8 @@ if $( module spider gaussian | grep -q g16.c01 ) ; then
 	echo "version exists"
 else 
 	echo "version not found"
-fi 
+fi
+
 #gaussian version latest
 #im honestly not sure what I was trying to do here
 G=$( module spider gaussian | grep "gaussian/" | tail -n 2 | head -n 1 )  && G=${G// /}
@@ -210,7 +211,7 @@ NCPUS=${NCPUS//[!0-9]/}
 # route stuff. will have to think over this
 ROUTE=$( grep \# ${1} | head -n 1 )
 
-# use below for error checking. rest is not needed
+# use below for error checking. Rest is not needed
 	echo "ERROR: incorrect memory units specified in .com file. Must use MB or GB"
 	exit ${ER_MEM_UNIT}
 }
