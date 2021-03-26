@@ -1,25 +1,27 @@
 #!/bin/bash
 #cute little script to give you quick and simple information about your slurm queue
+#now formatted so that it looks pretty!
 #most useful to alias in your .bashrc file
-#for example: in your home directory open your .bashrc file with a text editor of your choosing
-#add the line 
+#for example: in your home directory open your .bashrc file with a text editor of your choosing add the line 
 # alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"
 #to the alias section of your .bashrc file and save
-#make sure qstat.sh can be executed or this won't work 
+#make sure qstat.sh can be executed or this won't work
+#you can then use the command qs anytime to run this script
 
 QUEUE=$(sq)
 #total
 TOTAL=$( echo "${QUEUE}" | wc -l )
-echo "Total queue:" $(( TOTAL - 1 ))
+echo "------------------------------"
+echo "$( tput bold )Total queue:$(tput sgr0)" $(( TOTAL - 1 ))
 #running
-echo "Running:" $( echo "${QUEUE}" | grep -c '(None)' )
+echo " $( tput bold )Running:$(tput sgr0)   " $( echo "${QUEUE}" | grep -c '(None)' )
 #in queue
-echo "Queued"
-echo "Priority:" $( echo "${QUEUE}" | grep -c '(Priority)' )
+echo " $( tput bold )Priority:$(tput sgr0)  " $( echo "${QUEUE}" | grep -c '(Priority)' )
 #priority
-echo "Resources:" $( echo "${QUEUE}" | grep -c '(Resources)' )
+echo " $( tput bold )Resources:$(tput sgr0) " $( echo "${QUEUE}" | grep -c '(Resources)' )
 #resources
-echo
-echo "Scratch files to be deleted: " $( wc -l < /home/scratch_to_delete/${USER} )
+echo "------------------------------"
+echo "$( tput bold )Scratch files to be deleted:$(tput sgr0)" $( wc -l < /home/scratch_to_delete/${USER} )
+echo "------------------------------"
 
 exit 0
