@@ -66,4 +66,4 @@ When making your gaussian input file you should choose an amout of memory that f
 | 3   | 64 | 3022  | 47.2 |
 | 72  | 44 | 192   | 4.4  |
  
-**Remember:** The sg16submit.sh script requests 2 G more memory from SLURM than is specified in your input file.  
+**IMPORTANT:** The sg16submit.sh script requests 2 G more memory from SLURM than is specified in your input file. Make sure to adjust the memory you request so that the **final amount** of memory requested matches the node memory.  
