@@ -21,6 +21,7 @@
 # improve formatting of text sent to log fle (on going)
 # Write all log output to temp file (use TEMP=$( mktemp )) and then write to log all at once (https://unix.stackexchange.com/questions/181937/how-create-a-temporary-file-in-shell-script)
 # recognize what kind of calculation has been run and if the job completes summarize important info (ex. if structure if converged for opt and freq)
+# add text formatting to conformation output
 ######
 
 ### STUFF ###
@@ -441,15 +442,15 @@ else
 	TIMEOUT=0
 fi
 
-# check with user if values are as desired
-echo
+# check with the user if values are as desired
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 echo "The calculation on ${COM_FULLNAME} will be submitted with the following values:"
-echo "Email: ${EMAIL}"
-echo "Walltime: ${TIME}"
-echo "Cores: ${NCPUS}"
-echo "Compensated Memory: ${MEM_VAL}${MEM_UNIT}"
-echo "Run script: ${SCRIPT}"
-echo "Requeue: ${RESTART}"
+echo "Email: $(tput bold)${EMAIL}$(tput sgr0)"
+echo "Walltime: $(tput Bold)${TIME}$(tput sgr0)"
+echo "Cores: $(tput bold)${NCPUS}$(tput sgr0)"
+echo "Compensated Memory: $(tput bold)${MEM_VAL}${MEM_UNIT}$(tput sgr0)"
+echo "Run script: $(tput bold)${SCRIPT}$(tput sgr0)"
+echo "Requeue: $(tput bold)${RESTART}$(tput sgr0)"
 echo
 echo -n "Do you want to submit with these values? [y/n]: "
 while : ;do 
