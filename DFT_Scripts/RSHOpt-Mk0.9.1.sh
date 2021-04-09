@@ -12,6 +12,7 @@
 
 ### Starting bounds and convergence (tolerance) criteria ###
 #For omega value in a.u. omega = W/10000. For convenience ALL w values in this script are used as omega*10000.
+# These values can be adjusted to speed up calculations
 W_LOWER=500
 W_UPPER=5000
 TOL=10
