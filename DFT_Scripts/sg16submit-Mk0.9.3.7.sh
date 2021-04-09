@@ -22,7 +22,7 @@
 # Write all log output to temp file (use TEMP=$( mktemp )) and then write to log all at once (https://unix.stackexchange.com/questions/181937/how-create-a-temporary-file-in-shell-script)
 # recognize what kind of calculation has been run and if the job completes summarize important info (ex. if structure if converged for opt and freq)
 # add text formatting to conformation output
-######
+# use if [[ -z $( tail -n 2 <file>.com ) ]] ; then <stuff> ; fi to check if there are at least two blank lines at the end of the com file. If there isnt add two blank lines to com file before submission.
 
 ### STUFF ###
 SCRIPT_CALC=G16Calc-1.7.4.sh
