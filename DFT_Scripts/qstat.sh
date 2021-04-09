@@ -24,4 +24,6 @@ echo "------------------------------"
 echo "$( tput bold )Scratch files to be deleted:$(tput sgr0)" $( wc -l < /home/scratch_to_delete/${USER} )
 echo "------------------------------"
 
+# use below to display files that correspond to the running calculations
+# for I in $( sq -h | grep -oE '^[[:space:]]{0,}[0-9]{1,}' | xargs ) ; do ls -R ~/scratch/ | grep "${I}" ; done
 exit 0
