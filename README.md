@@ -12,7 +12,7 @@ Within the DFT_Sripts folder the following files are found:
 [renderPovrayGraham.sh](#renderpovraygrahamsh)  
 
 ## sg16submit.sh
-Reads your gaussian input file (.com file) and sets `sbatch` arguments for you. This helps avoid mistakes and saves time when submitting multiple calculations. This is the only file required when submitting gaussian calculations as all other required files will be written by this script. The `-r` argument requests that calculations automatically be requeued upon reaching their wall-time.  
+Reads your gaussian input file (.com file) and sets `sbatch` arguments for you. This helps avoid mistakes and saves time when submitting multiple calculations. This is the only file required when submitting gaussian calculations as all other required files will be written by this script.    
 **NOTE:** This run script is intended to be used in the same folder as your gaussian input file.  
 
 Run using:  
