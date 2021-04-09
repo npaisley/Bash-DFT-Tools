@@ -51,6 +51,104 @@ EOF
 
 }
 
+### new version rewrite ###
+# new version idea
+# everything is based off a compound basename (aka. the structure being calculated)
+# have a single route specified in the script (maybe in a text file but im not sure about this)
+#	in addition to the route some simple things will also be held constant
+#		charge and multiplicity
+#		memory and num cpus
+# additional info can be specified using a text file
+# this will be controlled using getopts
+# usage in teh form:
+# ./multiComWriter.sh -n HMAT3TAZ -c "-TD" -o "-opt" -e
+# in teh above case "HMAT3TAZ" is the base name. the oldchk file is to be included and is named "HMAT3TAZ-opt.chk"
+# the new chk file is to be named "HMAT3TAZ-TD.chk"
+# extra options are to be read from a file named "HMAT3TAZ.txt"
+# this means that multiple com files can be generated (they will all have the same route aside from any additional information provided) when this is used in a loop
+# in regards to oti type calculations this script would have to be used multiple times but that is an outside case. This script would match the usual workflow of DFT in our lab
+# extra file would take the form
+# xyz {
+# data
+# }
+# basis {
+# data
+# }
+# route {
+# data
+# }
+# but the order would not matter
+
+# get xyz data
+# check if "xyz {" is present. a check for empty xyz data is done as well at the end
+if grep -qE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} ; then #add file #if "xyz {" present then attempt to read that data
+	# check for multiple sets of xyz data. Error out if multiple found.
+	if [[ $( grep -cE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ) -gt 1 ]] ; then
+		echo "multiple sets of xyz coordinates found. Specify only one."
+		usage
+		exit 1
+	fi
+	# Read XYZ values from additional file.
+	# This is case and space insensitive aka. "xyz {" "XYZ{" "xYz  {" will all work. This is done to prevent issues with simple typos.
+	XYZ_DATA_ST=$( grep -nE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' ) #add file # get the line number that "xyz {" is on
+	XYZ_DATA_END=$( tail -n +${XYZ_DATA_ST} ${} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) #add file # get the line number that the first "}" following "xyz {" is on 
+	((XYZ_DATA_ST+=1)) #increment line number by one so "xyz {" line is ignored
+	((XYZ_DATA_END-=2)) #decrease line number by one so the "}" line is ignored
+	XYZ_DATA=$( tail -n +${XYZ_DATA_ST} ${} | head -n ${XYZ_DATA_END} | grep . ) #add file #assign the xyz data to the string XYZ_DATA adn remove any blank lines
+else
+	XYZ_DATA=NULL #set XYZ_DATA to null if "xyz {" is not present in the file
+fi
+XYZ_DATA=${XYZ_DATA:-NULL} #set XYZ_DATA to NULL if no xyz data is given but "xyz { }" is present. aka. the string is empty
+
+# get basis data
+# check if "basis {" is present. a check for empty basis data is done as well at the end
+if grep -qE '[b,B][a,A][s,S][i,I][s,S][[:space:]]{0,}{' ${} ; then #add file #if "basis {" present then attempt to read that data
+	# check for multiple sets of xyz data. Error out if multiple found.
+	if [[ $( grep -cE '[b,B][a,A][s,S][i,I][s,S][[:space:]]{0,}{' ) -gt 1 ]] ; then
+		echo "multiple sets of basis information found. Specify only one."
+		usage
+		exit 1
+	fi
+	# Read basis data from additional file.
+	# This is case and space insensitive aka
+	BASIS_DATA_ST=$( grep -nE '[b,B][a,A][s,S][i,I][s,S][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' ) #add file # get the line number that "xyz {" is on
+	BASIS_DATA_END=$( tail -n +${BASIS_DATA_ST} ${} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) #add file # get the line number that the first "}" following "basis {" is on 
+	((BASIS_DATA_ST+=1)) #increment line number by one so "basis {" line is ignored
+	((BASIS_DATA_END-=2)) #decrease line number by one so the "}" line is ignored
+	BASIS_DATA=$( tail -n +${BASIS_DATA_ST} ${} | head -n ${BASIS_DATA_END} ) #add file #assign the basis data to a string
+else
+	BASIS_DATA=NULL #set to null if "basis {" is not present in the file
+fi
+BASIS_DATA=${BASIS_DATA:-NULL} #set to NULL if no basis data is given but "basis { }" is present. aka. the string is empty
+
+# get additional route data
+# check if "route {" is present. a check for empty route data is done as well at the end
+if grep -qE '[r,R][o,O][u,U][t,T][e,E][[:space:]]{0,}{' ${} ; then #add file #if "route {" present then attempt to read that data
+	# check for multiple sets of route data. Error out if multiple found.
+	if [[ $( grep -cE '[r,R][o,O][u,U][t,T][e,E][[:space:]]{0,}{' ) -gt 1 ]] ; then
+		echo "multiple sets of route information found. Specify only one."
+		usage
+		exit 1
+	fi
+	# Read route from file.
+	# This is case and space insensitive
+	ROUTE_DATA_ST=$( grep -nE '[r,R][o,O][u,U][t,T][e,E][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' ) #add file # get the line number that "route {" is on
+	ROUTE_DATA_END=$( tail -n +${XYZ_DATA_ST} ${} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) #add file # get the line number that the first "}" following "route {" is on 
+	((XYZ_DATA_ST+=1)) #increment line number by one
+	((XYZ_DATA_END-=2)) #decrease line number by one
+	ROUTE_DATA=$( tail -n +${XYZ_DATA_ST} ${} | head -n ${XYZ_DATA_END} | xargs ) #add file #assign the data to a string and remove leading and trailing spaces Xargs also seems to remove new line characters so this will fix any issue where poeple add multiple lines of things in the route section. Or of course it could just mysteriously break teh whole script. Only time will tell
+	
+else
+	ROUTE_DATA=NULL #set to null if "route {" is not present in the file
+fi
+ROUTE_DATA=${ROUTE_DATA:-NULL} #set to NULL if no route is given but "route { }" is present. aka. the string is empty
+
+### end of rewrite ###
+
+
+
+
+
 #make sure file name is provided. if it isnt then exit with an error message
 if [[ -z ${1} ]] ; then
 	echo "an xyz file must be specified"
