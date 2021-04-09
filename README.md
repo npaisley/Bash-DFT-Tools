@@ -41,6 +41,7 @@ The wall-time is passed on to the run script so that long running calulations ca
 ## NTOcomwriter.sh  
 
 ## RSHOpt.sh  
+The boundary values in the script can be changed to speed up calculations if you are confident that the optimum w value is still within the bounded range. If the script determines that the optimum value (or a value very close to it) is the optimum value then you have set the boundary too tight and you should re-run the optimization with a wider boundary.  
 
 ## valueExtractor.sh    
 Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files and outputs a comma separated string. The ouput can be directed to a file or to the command line. If ouput is directed to a file the header will only be printed once.  
