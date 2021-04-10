@@ -11,6 +11,7 @@
 QUEUE=$(sq)
 #total
 TOTAL=$( echo "${QUEUE}" | wc -l )
+# use echo "words" | tr "[:print:]" "-" for a dynamic line
 echo "------------------------------"
 echo "$( tput bold )Total queue:$(tput sgr0)" $(( TOTAL - 1 ))
 #running
