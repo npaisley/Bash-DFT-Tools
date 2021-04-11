@@ -9,8 +9,6 @@
 #you can then use the command qs anytime to run this script
 
 summary_short () {
-# set dynamic line length
-LINE="$( echo "Scratch files to be deleted: $( wc -l < /home/scratch_to_delete/${USER} )" | tr "[:print:]" "-" )"
 #total queue
 TOTAL=$( echo "${QUEUE}" | wc -l )
 # use echo "words" | tr "[:print:]" "-" for a dynamic line
@@ -42,27 +40,31 @@ for JOBID in $( sq -h | grep -oE '^[[:space:]]{0,}[0-9]{1,}' | xargs ) ; do
         echo "${JOBID} not found"
     fi
 done
+echo "${LINE}"
 }
 
 QUEUE=$(sq)
 while getopts ":l" OPTION ; do
   case ${OPTION} in
     l ) # display long summary
+        # set dynamic line length
+        LINE="$( echo "Scratch files to be deleted: $( wc -l < /home/scratch_to_delete/${USER} )" | tr "[:print:]" "-" )"
         summary_short
         summary_long
         exit 0
         ;;
-    h ) # display help message
+    \? ) # display help message
         echo './sqtat.sh [-l] [-h]'
         echo '-l : give longer printout'
         echo '-h : prints this message'
         echo 'if no argument is provided a short summary is printed'
         exit 0
         ;;
-    \? ) # display short summary
+    : ) # if no argument is passed then print a short summary
+        # set dynamic line length
+        LINE="$( echo "Scratch files to be deleted: $( wc -l < /home/scratch_to_delete/${USER} )" | tr "[:print:]" "-" )"
         summary_short
         exit 0
-        ;;
   esac
 done
 
