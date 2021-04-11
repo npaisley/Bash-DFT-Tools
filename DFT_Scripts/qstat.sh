@@ -53,7 +53,7 @@ while getopts ":l" OPTION ; do
         summary_long
         exit 0
         ;;
-    \? ) # display help message
+    h ) # display help message
         echo './sqtat.sh [-l] [-h]'
         echo '-l : give longer printout'
         echo '-h : prints this message'
