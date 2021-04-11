@@ -61,9 +61,9 @@ QUEUE=$(sq)
 #parse any given arguments
 while getopts ":l" OPTION ; do
   case ${OPTION} in
-    l ) # display long summary
-        # set dynamic line length via an overcomplicated method
-        LINE=0
+    l ) # display long summary (aka. short summary with appended info)
+        # set dynamic line length by comparing every line in long summary section. Minimum length is set by longest line in the short summary portion
+        LINE="$( echo "Scratch files to be deleted: $( wc -l < /home/scratch_to_delete/${USER} )" | wc -L )"
         for JOBID in $( sq -h | grep -oE '^[[:space:]]{0,}[0-9]{1,}' | xargs ) ; do 
             if $( ls -R ~/scratch/ | grep -q "${JOBID}" ) ; then
                 LINE_ST="${JOBID} running: $( ls -R ~/scratch/ | grep "${JOBID}" )"
