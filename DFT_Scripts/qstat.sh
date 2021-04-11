@@ -34,7 +34,7 @@ for JOBID in $( sq -h | grep -oE '^[[:space:]]{0,}[0-9]{1,}' | xargs ) ; do
         echo "${JOBID} running: $( ls -R ~/scratch/ | grep "${JOBID}" )"
     # if the jobid is not found in the scratch folder then search the sg16 log for it
     elif $( grep -a -q "${JOBID}" ~/sg16log/sg16submit.log ) ; then
-        echo "${JOBID} queued: $( grep -a -B 2 "${I}" ~/sg16log/sg16submit.log | head -n 1 | grep -oE '[^/]{1,}$')"
+        echo "${JOBID} queued: $( grep -a -B 2 "${JOBID}" ~/sg16log/sg16submit.log | head -n 1 | grep -oE '[^/]{1,}$')"
     # if the jobid cannot be found anywhere inform the user
     else
         echo "${JOBID} not found"
