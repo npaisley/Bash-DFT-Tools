@@ -56,7 +56,7 @@ while getopts ":l" OPTION ; do
         echo "./sqtat.sh [-l] [-h]"
         echo "-l : give longer printout
         echo "-h : prints this message"
-        echo "if no argument is provided a short summary is printed"
+        echo 'if no argument is provided a short summary is printed'
         exit 0
         ;;
     \? ) # display short summary
@@ -67,3 +67,4 @@ while getopts ":l" OPTION ; do
 done
 
 exit 0
+
