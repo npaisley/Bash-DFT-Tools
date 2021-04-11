@@ -53,20 +53,20 @@ while getopts ":l" OPTION ; do
         summary_long
         exit 0
         ;;
-    h ) # display help message
+    ? ) # display help message
         echo './sqtat.sh [-l] [-h]'
         echo '-l : give longer printout'
         echo '-h : prints this message'
         echo 'if no argument is provided a short summary is printed'
         exit 0
         ;;
-    : ) # if no argument is passed then print a short summary
-        # set dynamic line length
-        LINE="$( echo "Scratch files to be deleted: $( wc -l < /home/scratch_to_delete/${USER} )" | tr "[:print:]" "-" )"
-        summary_short
-        exit 0
   esac
 done
+
+# if no argument is passed then print a short summary
+# set dynamic line length
+LINE="$( echo "Scratch files to be deleted: $( wc -l < /home/scratch_to_delete/${USER} )" | tr "[:print:]" "-" )"
+summary_short
 
 exit 0
 
