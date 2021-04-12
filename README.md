@@ -52,6 +52,36 @@ To analyze a batch of files in a for loop use in the following fashion: ` for F 
 ## gparse.sh  
 
 ## qstat.sh  
+Alternative to using `squeue` on servers running Slurm. Running the script without any arguments gives a brief summary of the total number of jobs you have submitted and a break down of how many are running or queued. Additionally, the number of files that are set to be deleted from your scratch folder is also printed. For example:  
+```
+]$ ./qstat.sh
+----------------------------------------------
+Total queue: 4
+ Running:    3
+ Priority:   1
+ Resources:  0
+----------------------------------------------
+Scratch files to be deleted: 1
+----------------------------------------------
+```
+If the `-l` argument is used information about which files are being calculated is printed. Any other argument will result in help text being printed. For example:  
+```
+]$ ./qstat.sh -l
+----------------------------------------------
+Total queue: 4
+ Running:    3
+ Priority:   1
+ Resources:  0
+----------------------------------------------
+Scratch files to be deleted: 1
+----------------------------------------------
+46809868 running: HMAT3HAZ-RSHopt-46809868.out
+46809870 running: TBA3HAZ-RSHopt-46809870.out
+46809871 running: TBA3TAZ-RSHopt-46809871.out
+46861313 queued: HMAT3TAZ-RSHopt.com
+----------------------------------------------
+```
+It is useful to alias this script in your .bashrc file. This makes it easy and convenient to use. To do this open your .bashrc file (located in your home folder) with a text editor of your choosing and add the line `alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"` to the bottom of your .bashrc file and save. Change the file path to match where qstat.sh is and change `qs` to whatever command you would like to use to call the qstat script. You can then use the command `qs` or `qs -l` anytime to run this script. In the example above I have used `qs` and the script is saved in my home directory within the cloned github repository. Aliasing the file in the cloned respository allows you to take advantage of any updates to the script by simpling pulling (using `git pull`) the repository. 
 
 ## renderPovrayGraham.sh
 
