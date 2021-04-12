@@ -26,7 +26,13 @@ echo " $( tput bold )Priority:$(tput sgr0)  " $( echo "${QUEUE}" | grep -c '(Pri
 echo " $( tput bold )Resources:$(tput sgr0) " $( echo "${QUEUE}" | grep -c '(Resources)' )
 #resources
 echo "${LINE}"
-echo "$( tput bold )Scratch files to be deleted:$(tput sgr0)" $( wc -l < /home/scratch_to_delete/${USER} )
+#check if scratch_to_delete file exists and then set number of files that will be erased.
+if [[ -f "/home/scratch_to_delete/${USER}" ]] ; then
+    SCRATCH_TO_DELETE="$( wc -l < /home/scratch_to_delete/${USER} )"
+else
+    SCRATCH_TO_DELETE="0"
+fi
+echo "$( tput bold )Scratch files to be deleted:$(tput sgr0) ${SCRATCH_TO_DELETE}"
 echo "${LINE}"
 }
 
