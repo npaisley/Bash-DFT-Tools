@@ -86,7 +86,6 @@ It is useful to alias this script in your .bashrc file. This makes it easy and c
 <words and stuff>
 # User specific aliases and functions
 alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"
-
 ```
 Aliasing the file in the cloned respository allows you to take advantage of any updates to the script by simpling pulling (using `git pull`) the repository. 
 
