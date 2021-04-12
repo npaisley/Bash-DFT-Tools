@@ -81,7 +81,14 @@ Scratch files to be deleted: 1
 46861313 queued: HMAT3TAZ-RSHopt.com
 ----------------------------------------------
 ```
-It is useful to alias this script in your .bashrc file. This makes it easy and convenient to use. To do this open your .bashrc file (located in your home folder) with a text editor of your choosing and add the line `alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"` to the bottom of your .bashrc file and save. Change the file path to match where qstat.sh is and change `qs` to whatever command you would like to use to call the qstat script. You can then use the command `qs` or `qs -l` anytime to run this script. In the example above I have used `qs` and the script is saved in my home directory within the cloned github repository. Aliasing the file in the cloned respository allows you to take advantage of any updates to the script by simpling pulling (using `git pull`) the repository. 
+It is useful to alias this script in your .bashrc file. This makes it easy and convenient to use. To do this open your .bashrc file (located in your home folder) with a text editor of your choosing and add the line `alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"` to the bottom of your .bashrc file and save. Change the file path to match where qstat.sh is and change `qs` to whatever command you would like to use to call the qstat script. You can then use the command `qs` or `qs -l` anytime to run this script. In the example above I have used `qs` and the script is saved in my home directory within the cloned github repository. For example:  
+```
+<words and stuff>
+# User specific aliases and functions
+alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"
+
+```
+Aliasing the file in the cloned respository allows you to take advantage of any updates to the script by simpling pulling (using `git pull`) the repository. 
 
 ## renderPovrayGraham.sh
 
