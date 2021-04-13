@@ -81,7 +81,31 @@ EOF
 # imp: use printf -v ${1}_DATA "%s" "command or whatever" to set dynamic variable names. This will greatly simplify the script as the reading portion can become a function called with an argument that is the item to read. aka. xyz, route, basis. also use grep -i for cases insensitive search not regex...
 # get xyz data
 # check if "xyz {" is present. a check for empty xyz data is done as well at the end
-if grep -qE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} ; then #add file #if "xyz {" present then attempt to read that data
+
+file_reader () { #accepts two arguments. First is the search and variable key word. second is the file.
+
+if grep -iqE "${1}[[:space:]]{0,}{" ${2} ; then #if "KEYWORD {" present then attempt to read that data. case insensitive.
+	# check for multiple sets of data. Error out if multiple found.
+	if [[ $( grep -cE "${1}[[:space:]]{0,}{" ) -gt 1 ]] ; then
+		echo "multiple sets of ${1} data found. Specify only one." ## maybe make ${1} print in lower case using printf
+		usage 
+		exit 1
+	fi
+	# Read values from additional file.
+	# This is case and space insensitive aka. "xyz {" "XYZ{" "xYz  {" will all work. This is done to prevent issues with simple typos.
+	printf -v ${1}_DATA_ST "%s" "$( grep -nE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' )" #add file # get the line number that "xyz {" is on
+	printf -v ${1}_DATA_END "$s" "$( tail -n +${XYZ_DATA_ST} ${2} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' )" # get the line number that the first "}" following "xyz {" is on 
+	((XYZ_DATA_ST+=1)) #increment line number by one so "xyz {" line is ignored
+	((XYZ_DATA_END-=2)) #decrease line number by one so the "}" line is ignored
+	printf -v ${1}_DATA "%s" "$( tail -n +${XYZ_DATA_ST} ${2} | head -n ${XYZ_DATA_END} )"  #assign the data to string KEYWORD_DATA
+else
+	printf -v ${1}_DATA "%s" "NULL" #set KEYWORD_DATA to null if "KEYWORD {" is not present in the file
+fi
+### redo this line printf -v ${1}_DATA ${XYZ_DATA:-NULL} #set XYZ_DATA to NULL if no xyz data is given but "xyz { }" is present. aka. the string is empty
+
+}
+
+if grep -iqE '[[:space:]]{0,}{' ${} ; then #add file #if "xyz {" present then attempt to read that data
 	# check for multiple sets of xyz data. Error out if multiple found.
 	if [[ $( grep -cE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ) -gt 1 ]] ; then
 		echo "multiple sets of xyz coordinates found. Specify only one."
