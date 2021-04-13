@@ -78,7 +78,7 @@ EOF
 # data
 # }
 # but the order would not matter
-
+# imp: use printf -v ${1}_DATA "%s" "command or whatever" to set dynamic variable names. This will greatly simplify the script as the reading portion can become a function called with an argument that is the item to read. aka. xyz, route, basis. also use grep -i for cases insensitive search not regex...
 # get xyz data
 # check if "xyz {" is present. a check for empty xyz data is done as well at the end
 if grep -qE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} ; then #add file #if "xyz {" present then attempt to read that data
