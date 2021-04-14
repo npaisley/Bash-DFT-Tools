@@ -82,90 +82,35 @@ EOF
 # get xyz data
 # check if "xyz {" is present. a check for empty xyz data is done as well at the end
 
-file_reader () { #accepts two arguments. First is the search and variable key word. second is the file.
+file_reader () { #accepts two arguments. 1 is the search and variable keywod. 2 is the file.
 
-if grep -iqE "${1}[[:space:]]{0,}{" ${2} ; then #if "KEYWORD {" present then attempt to read that data. case insensitive.
+if grep -iqE "${1}[[:space:]]{0,}{" ${2} ; then #if "keyword {" present then attempt to read that data. case insensitive.
 	# check for multiple sets of data. Error out if multiple found.
-	if [[ $( grep -cE "${1}[[:space:]]{0,}{" ) -gt 1 ]] ; then
-		echo "multiple sets of ${1} data found. Specify only one." ## maybe make ${1} print in lower case using printf
+	if [[ $( grep -icE "${1}[[:space:]]{0,}{" ) -gt 1 ]] ; then
+		echo "multiple sets of ${1,,} data found. Specify only one." ## maybe make ${1} print in lower case using printf
 		usage 
 		exit 1
 	fi
-	# Read values from additional file.
-	# This is case and space insensitive aka. "xyz {" "XYZ{" "xYz  {" will all work. This is done to prevent issues with simple typos.
-	printf -v ${1}_DATA_ST "%s" "$( grep -nE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' )" #add file # get the line number that "xyz {" is on
-	printf -v ${1}_DATA_END "$s" "$( tail -n +${XYZ_DATA_ST} ${2} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' )" # get the line number that the first "}" following "xyz {" is on 
-	((XYZ_DATA_ST+=1)) #increment line number by one so "xyz {" line is ignored
-	((XYZ_DATA_END-=2)) #decrease line number by one so the "}" line is ignored
-	printf -v ${1}_DATA "%s" "$( tail -n +${XYZ_DATA_ST} ${2} | head -n ${XYZ_DATA_END} )"  #assign the data to string KEYWORD_DATA
-else
-	printf -v ${1}_DATA "%s" "NULL" #set KEYWORD_DATA to null if "KEYWORD {" is not present in the file
+	# Read data.
+	local DATA_ST=$( grep -inE "${1}[[:space:]]{0,}{" ${2} | grep -oE '^[0-9]{1,}' ) # get the line number that "keyword {" is on
+	local DATA_END=$( tail -n +${DATA_ST} ${2} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) # get the line number that the first "}" following "keyword {" is on 
+	((DATA_ST+=1)) #increment line number by one so "keyword {" line is ignored
+	((DATA_END-=2)) #decrease line number by one so the "}" line is ignored
+	if [[ ${DATA_END} -le 2 ]] ; then #set KEYWORD_DATA to NULL if no data is given but "keyword { }" or keyword { \n} is present. aka. no data is present
+		printf -v "${1}_DATA" "%s" "NULL"
+	fi
+	printf -v "${1}_DATA" "%s" "$( tail -n +${DATA_ST} ${2} | head -n ${DATA_END} | grep . )" # assign the data to the string KEYWORD_DATA with any blank lines removed
 fi
-### redo this line printf -v ${1}_DATA ${XYZ_DATA:-NULL} #set XYZ_DATA to NULL if no xyz data is given but "xyz { }" is present. aka. the string is empty
 
 }
 
-if grep -iqE '[[:space:]]{0,}{' ${} ; then #add file #if "xyz {" present then attempt to read that data
-	# check for multiple sets of xyz data. Error out if multiple found.
-	if [[ $( grep -cE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ) -gt 1 ]] ; then
-		echo "multiple sets of xyz coordinates found. Specify only one."
-		usage
-		exit 1
+for KEYWORD in XYZ BASIS ROUTE ; do # add list elsewhere so it is easier to extend functionality 
+	if $( grep -iqE "${KEYWORD}[[:space:]]{0,}{" ${} ) ; then #add file #if "keyword {" present then attempt to read that data. his is case and space insensitive ex. "xyz {" "XYZ{" "xYz  {" will all work. This is done to prevent issues with typos.
+		file_reader "${KEYWORD}" "${}" #add file defined KEYWORD_DATA string
+	else
+		printf -v "${KEYWORD}_DATA" "%s" "NULL" # if keyword is not in the file set KEYWORD_DATA to NULL
 	fi
-	# Read XYZ values from additional file.
-	# This is case and space insensitive aka. "xyz {" "XYZ{" "xYz  {" will all work. This is done to prevent issues with simple typos.
-	XYZ_DATA_ST=$( grep -nE '[x,X][y,Y][z,Z][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' ) #add file # get the line number that "xyz {" is on
-	XYZ_DATA_END=$( tail -n +${XYZ_DATA_ST} ${} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) #add file # get the line number that the first "}" following "xyz {" is on 
-	((XYZ_DATA_ST+=1)) #increment line number by one so "xyz {" line is ignored
-	((XYZ_DATA_END-=2)) #decrease line number by one so the "}" line is ignored
-	XYZ_DATA=$( tail -n +${XYZ_DATA_ST} ${} | head -n ${XYZ_DATA_END} | grep . ) #add file #assign the xyz data to the string XYZ_DATA adn remove any blank lines
-else
-	XYZ_DATA=NULL #set XYZ_DATA to null if "xyz {" is not present in the file
-fi
-XYZ_DATA=${XYZ_DATA:-NULL} #set XYZ_DATA to NULL if no xyz data is given but "xyz { }" is present. aka. the string is empty
-
-# get basis data
-# check if "basis {" is present. a check for empty basis data is done as well at the end
-if grep -qE '[b,B][a,A][s,S][i,I][s,S][[:space:]]{0,}{' ${} ; then #add file #if "basis {" present then attempt to read that data
-	# check for multiple sets of xyz data. Error out if multiple found.
-	if [[ $( grep -cE '[b,B][a,A][s,S][i,I][s,S][[:space:]]{0,}{' ) -gt 1 ]] ; then
-		echo "multiple sets of basis information found. Specify only one."
-		usage
-		exit 1
-	fi
-	# Read basis data from additional file.
-	# This is case and space insensitive aka
-	BASIS_DATA_ST=$( grep -nE '[b,B][a,A][s,S][i,I][s,S][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' ) #add file # get the line number that "xyz {" is on
-	BASIS_DATA_END=$( tail -n +${BASIS_DATA_ST} ${} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) #add file # get the line number that the first "}" following "basis {" is on 
-	((BASIS_DATA_ST+=1)) #increment line number by one so "basis {" line is ignored
-	((BASIS_DATA_END-=2)) #decrease line number by one so the "}" line is ignored
-	BASIS_DATA=$( tail -n +${BASIS_DATA_ST} ${} | head -n ${BASIS_DATA_END} ) #add file #assign the basis data to a string
-else
-	BASIS_DATA=NULL #set to null if "basis {" is not present in the file
-fi
-BASIS_DATA=${BASIS_DATA:-NULL} #set to NULL if no basis data is given but "basis { }" is present. aka. the string is empty
-
-# get additional route data
-# check if "route {" is present. a check for empty route data is done as well at the end
-if grep -qE '[r,R][o,O][u,U][t,T][e,E][[:space:]]{0,}{' ${} ; then #add file #if "route {" present then attempt to read that data
-	# check for multiple sets of route data. Error out if multiple found.
-	if [[ $( grep -cE '[r,R][o,O][u,U][t,T][e,E][[:space:]]{0,}{' ) -gt 1 ]] ; then
-		echo "multiple sets of route information found. Specify only one."
-		usage
-		exit 1
-	fi
-	# Read route from file.
-	# This is case and space insensitive
-	ROUTE_DATA_ST=$( grep -nE '[r,R][o,O][u,U][t,T][e,E][[:space:]]{0,}{' ${} | grep -oE '^[0-9]{1,}' ) #add file # get the line number that "route {" is on
-	ROUTE_DATA_END=$( tail -n +${XYZ_DATA_ST} ${} | grep -m 1 -nE '}' | grep -oE '^[0-9]{1,}' ) #add file # get the line number that the first "}" following "route {" is on 
-	((XYZ_DATA_ST+=1)) #increment line number by one
-	((XYZ_DATA_END-=2)) #decrease line number by one
-	ROUTE_DATA=$( tail -n +${XYZ_DATA_ST} ${} | head -n ${XYZ_DATA_END} | xargs ) #add file #assign the data to a string and remove leading and trailing spaces Xargs also seems to remove new line characters so this will fix any issue where poeple add multiple lines of things in the route section. Or of course it could just mysteriously break teh whole script. Only time will tell
-	
-else
-	ROUTE_DATA=NULL #set to null if "route {" is not present in the file
-fi
-ROUTE_DATA=${ROUTE_DATA:-NULL} #set to NULL if no route is given but "route { }" is present. aka. the string is empty
+done
 
 ### end of rewrite ###
 
