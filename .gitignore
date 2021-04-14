@@ -1,0 +1,2 @@
+# prevent annoying .DS_Store files from ever being commited
+**/.DS_Store
