@@ -111,6 +111,21 @@ for KEYWORD in XYZ BASIS ROUTE ; do # add list elsewhere so it is easier to exte
 		printf -v "${KEYWORD}_DATA" "%s" "NULL" # if keyword is not in the file set KEYWORD_DATA to NULL
 	fi
 done
+# use to parse array tat will set where to look for what info
+KEYWORD=(r route r cm m routeadd m xyz m basis r solvent) # r means route file. m means molecule file. these must be space separated and each keyword must be preceeded by a letter indicator so that teh script knows where to look for that data. these must also be in the order they are to be printed in the .com file as this list sets the order.
+n=0
+while [[ $n -lt ${#A[@]} ]] ; do
+	if [[ ${A[$n]} == "r" ]] ; then
+		((n++))
+		echo "${A[$n]} is in the route file"
+		((n++))
+	elif [[ ${A[$n]} == "m" ]] ; then
+		((n++))
+		echo "${A[$n]} is in the molecule file"
+		((n++))
+	fi
+done
+
 
 ### end of rewrite ###
 
