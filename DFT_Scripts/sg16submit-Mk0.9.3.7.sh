@@ -16,6 +16,7 @@
 # requeing is also disabled for TD-DFT and TDA-DFT since # restart does not work with those methods
 #
 # To Do:
+# use printf to reduce the amount of lines needed for simple text output
 # enable requeuing for RSHopt
 # add command option to print last x number of submitted jobs (filename jobid)
 # improve formatting of text sent to log fle (on going)
@@ -441,7 +442,8 @@ if [ "${RESTART}" = "TRUE" ]; then
 else
 	TIMEOUT=0
 fi
-
+# use echo "-----------------------------------------" ; printf "%-19s| ${BOLDTEXT}\n" "${TEXT[@]}" ; echo "-----------------------------------------" or similar for text formatting
+# where BOLDTEXT=${tput bold}%s${tput sgr0} and TEXT=(an array of the text to be displayed)
 # check with the user if values are as desired
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 echo "The calculation on ${COM_FULLNAME} will be submitted with the following values:"
@@ -473,6 +475,7 @@ while : ;do
 done
 
 # Submit the job
+# use printf to print this in one shot. That way a temp file is not needed
 echo >> ${LOG}
 echo "<submission>" >> ${LOG}
 echo "	type: new submission" >> ${LOG}
