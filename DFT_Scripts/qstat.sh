@@ -16,15 +16,10 @@ summary_short () {
 #total queue
 TOTAL=$( echo "${QUEUE}" | wc -l )
 # use echo "words" | tr "[:print:]" "-" for a dynamic line
+SHORT_SUM=("Total queue:" "$(( TOTAL - 1 ))" " Running:" "$( echo "${QUEUE}" | grep -c '(None)' )" " Priority:" "$( echo "${QUEUE}" | grep -c '(Priority)' )" " Resources:" "$( echo "${QUEUE}" | grep -c '(Resources)' )")
 echo "${LINE}"
-echo "$( tput bold )Total queue:$(tput sgr0)" $(( TOTAL - 1 ))
-#running
-echo " $( tput bold )Running:$(tput sgr0)   " $( echo "${QUEUE}" | grep -c '(None)' )
-#in queue
-echo " $( tput bold )Priority:$(tput sgr0)  " $( echo "${QUEUE}" | grep -c '(Priority)' )
-#priority
-echo " $( tput bold )Resources:$(tput sgr0) " $( echo "${QUEUE}" | grep -c '(Resources)' )
-#resources
+# print total queue, running, proprity, and resources stats
+printf "$( tput bold )%-13s$(tput sgr0) %s/n" "${SHORT_SUM[@]}"
 echo "${LINE}"
 #check if scratch_to_delete file exists and then set number of files that will be erased.
 if [[ -f "/home/scratch_to_delete/${USER}" ]] ; then
