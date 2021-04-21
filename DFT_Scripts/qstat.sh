@@ -19,7 +19,7 @@ TOTAL=$( echo "${QUEUE}" | wc -l )
 SHORT_SUM=("Total queue:" "$(( TOTAL - 1 ))" " Running:" "$( echo "${QUEUE}" | grep -c '(None)' )" " Priority:" "$( echo "${QUEUE}" | grep -c '(Priority)' )" " Resources:" "$( echo "${QUEUE}" | grep -c '(Resources)' )")
 echo "${LINE}"
 # print total queue, running, proprity, and resources stats
-printf "$( tput bold )%-13s$(tput sgr0) %s\n" "${SHORT_SUM[@]}"
+printf "$( tput bold )%-12s$(tput sgr0) %s\n" "${SHORT_SUM[@]}"
 echo "${LINE}"
 #check if scratch_to_delete file exists and then set number of files that will be erased.
 if [[ -f "/home/scratch_to_delete/${USER}" ]] ; then
