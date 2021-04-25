@@ -84,22 +84,20 @@ EOF
 
 file_reader () { #accepts two arguments. 1 is the search and variable keywod. 2 is the file.
 
-if grep -iqE "${1}[[:space:]]{0,}{" ${2} ; then #if "<keyword>" present then attempt to read that data. case insensitive.
+if grep -iqE "<${1}>" ${2} ; then #if "<keyword>" present then attempt to read that data. case insensitive.
 	# check for multiple sets of data. Error out if multiple found.
 	if [[ $( grep -icE "<${1}>" ) -gt 1 ]] ; then
-		printf "multiple sets of %s data found. Specify only one." "${1,,}" ###### continue using only printf and using html tags here
+		printf "multiple sets of %s data found. Specify only one." "${1,,}"
 		usage 
 		exit 1
 	fi
-	# Read data.
-	local DATA_ST=$( grep -inE "<${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "keyword {" is on
-	local DATA_END=$( tail -n +${DATA_ST} ${2} | grep -m 1 -nE '</${1}>' | grep -oE '^[^:]{1,}' ) # get the line number that the first "}" following "keyword {" is on 
-	((DATA_ST+=1)) #increment line number by one so "keyword {" line is ignored
-	((DATA_END-=2)) #decrease line number by one so the "}" line is ignored
-	if [[ ${DATA_END} -le 2 ]] ; then #set KEYWORD_DATA to NULL if no data is given but "keyword { }" or keyword { \n} is present. aka. no data is present
+	# Read data. I think this is the only part that should be needed for this function. move above.
+	local DATA_ST=$( grep -in "<${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "<keyword>" is on
+	local DATA_END=$( grep -in "</${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "</keyword>" is on
+	if [[ $(( DATA_ST - DATA_END )) -le 1 ]] ; then # set KEYWORD_DATA to NULL if no data is given but keyword tags are present. aka. no data is present
 		printf -v "${1}_DATA" "%s" "NULL"
 	fi
-	printf -v "${1}_DATA" "%s" "$( tail -n +${DATA_ST} ${2} | head -n ${DATA_END} | grep . )" # assign the data to the string KEYWORD_DATA with any blank lines removed
+	printf -v "${1}_DATA" "%s" "$( tail -n +$(( DATA_ST + 1 )) ${2} | head -n $(( DATA_END - DATA_ST - 1 )) | grep . )" # assign the data to the string KEYWORD_DATA with any blank lines removed
 fi
 
 }
