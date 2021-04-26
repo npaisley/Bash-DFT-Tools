@@ -82,48 +82,59 @@ EOF
 # get xyz data
 # check if "xyz {" is present. a check for empty xyz data is done as well at the end
 
-file_reader () { #accepts two arguments. 1 is the search and variable keywod. 2 is the file.
+file_reader () { #accepts two arguments. 1 is the item keyword. 2 is the file name.
 
-if grep -iqE "<${1}>" ${2} ; then #if "<keyword>" present then attempt to read that data. case insensitive.
-	# check for multiple sets of data. Error out if multiple found.
-	if [[ $( grep -icE "<${1}>" ) -gt 1 ]] ; then
-		printf "multiple sets of %s data found. Specify only one." "${1,,}"
-		usage 
-		exit 1
-	fi
-	# Read data. I think this is the only part that should be needed for this function. move above.
-	local DATA_ST=$( grep -in "<${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "<keyword>" is on
-	local DATA_END=$( grep -in "</${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "</keyword>" is on
-	if [[ $(( DATA_ST - DATA_END )) -le 1 ]] ; then # set KEYWORD_DATA to NULL if no data is given but keyword tags are present. aka. no data is present
-		printf -v "${1}_DATA" "%s" "NULL"
-	fi
-	printf -v "${1}_DATA" "%s" "$( tail -n +$(( DATA_ST + 1 )) ${2} | head -n $(( DATA_END - DATA_ST - 1 )) | grep . )" # assign the data to the string KEYWORD_DATA with any blank lines removed
+local DATA_ST=$( grep -in "<${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "<keyword>" is on
+local DATA_END=$( grep -in "</${1}>" ${2} | grep -oE '^[^:]{1,}' ) # get the line number that "</keyword>" is on
+if [[ $(( DATA_END - DATA_ST )) -le 1 ]] || [[ $( tail -n +$(( DATA_ST + 1 )) ${2} | head -n $(( DATA_END - DATA_ST - 1 )) | grep -cE '[^[:blank:]]' ) -eq 0 ]] ; then # set KEYWORD_DATA to NULL if keyword tags are present but there is no data or if the keyword tags are in the wrong order.
+	printf -v "${1}_DATA" "%s" "NULL"
+	printf "No $s data found or tags are miss ordered in file %s. %s data set to NULL and will not be added to output files\n" "${1,,}" "${2}" "${1,,}" # print message informing user if keyword data is set to NULL
+else
+	printf -v "${1}_DATA" "%s" "$( tail -n +$(( DATA_ST + 1 )) ${2} | head -n $(( DATA_END - DATA_ST - 1 )) )" # assign the data to the string KEYWORD_DATA
+	printf "%s data found" "${1,,}" # inform user keyword data found
 fi
 
 }
 
-for KEYWORD in XYZ BASIS ROUTE ; do # add list elsewhere so it is easier to extend functionality 
-	if $( grep -iqE "${KEYWORD}[[:space:]]{0,}{" ${} ) ; then #add file #if "keyword {" present then attempt to read that data. his is case and space insensitive ex. "xyz {" "XYZ{" "xYz  {" will all work. This is done to prevent issues with typos.
-		file_reader "${KEYWORD}" "${}" #add file defined KEYWORD_DATA string
-	else
-		printf -v "${KEYWORD}_DATA" "%s" "NULL" # if keyword is not in the file set KEYWORD_DATA to NULL
-	fi
-done
-# use to parse array tat will set where to look for what info
-KEYWORD=(r route r cm m routeadd m xyz m basis r solvent) # r means route file. m means molecule file. these must be space separated and each keyword must be preceeded by a letter indicator so that teh script knows where to look for that data. these must also be in the order they are to be printed in the .com file as this list sets the order.
-n=0
-while [[ $n -lt ${#A[@]} ]] ; do
-	if [[ ${A[$n]} == "r" ]] ; then
-		((n++))
-		echo "${A[$n]} is in the route file"
-		((n++))
-	elif [[ ${A[$n]} == "m" ]] ; then
-		((n++))
-		echo "${A[$n]} is in the molecule file"
-		((n++))
-	fi
-done
+# Below is the array that controls the entire script. If you mess it up you will break the script!!
+# The order of these strings is very important for multiple reasons
+# This makes the script dynamic and allows you to add new sections that you want written in bulk with ease.
+# You can add or remove items as long as you follow the directions below
+# this requires that you add a pair of items to the below array AND then add the section to the appropriate file (calculation or molecule) with proper tags
+#     Regarding the array: 
+#         Use calc to tell the script the item is in the calculation file. This should be done if the item is specific to the calculation NOT the molecule. These itmes will be included in every calculation type
+#         Use mol to tell the script the item is in the molecule file. This should be used for items that are molecule specific NOT calculation specific. These items will be included in every file for that molecule
+#         The order of these pairs is crucial as it sets the order that they are printed in the ouput .com files. If you put in the wrong order you will generate files that gaussian can't read.
+#         The items must be space separated (so DO NOT use itmes with spaces in their names! You WILL BREAK SHIT) and each data keyword MUST be preceeded by an indicator (calc or mol) so that the script knows where to look for that data.
+#         The strings must be preceeded by "KEYWORD=(" and followed by ")" (google "bash arrays" if you are curious why)
+#     Regarding the tags:
+#         The header is <keyword> and the footer is </keyword> and they must be in the appropriate file. If is is in the wrong file it will be ignored.
+#         This is case insensitive but EVERYHTING ELSE MUST BE EXACT. aka is you use < keyword> or forget the / it will NOT WORK.
+KEYWORD=(calc ROUTE calc CM mol ROUTEADD mol XYZ mol BASIS calc SOLVENT) 
 
+# parse the KEYWORD array to deermine where to find what data and then set that data to appropriate strings
+for (( INDEX = 0 ; INDEX < "${#KEYWORD[@]}" ; INDEX += 2 )) ; do
+	#use this to parse array and find the relavent data
+	if [[ "${KEYWORD[$INDEX]}" -eq "calc" ]] ; then
+		
+		#look in calc file
+		
+	elif [[ "${KEYWORD[$INDEX]}" -eq "mol" ]] ; then
+		if $( grep -iqE "<${KEYWORD}>" ${} ) && $( grep -iqE "</${KEYWORD}>" ${} ) ; then #add file #if "<keyword>" and "</keyword>" present then attempt to read that data. this is case insensitive ex. "<xyz>" "<XYZ>" "<xYz>" will all work. This is done to prevent issues with typos.
+			if [[ $( grep -ic "<${KEYWORD}>" ${} ) -gt 1 ]] || [[ $( grep -ic "</${KEYWORD}>" ${} ) -gt 1 ]] ; then
+				printf -v "${KEYWORD}_DATA" "%s" "NULL" # if too many tags are present set KEYWORD_DATA to NULL and notify the user
+				printf "Multiple start or end tags for %s data is present in file %s. %s data set to NULL and will not be added to output files\n" "${KEYWORD,,}" "${}" "${KEYWORD,,}" # add file # print error message saying one or both tags are missing. Continue script though, this is just to inform the user incase they want that data. 
+			fi
+			file_reader "${KEYWORD}" "${}" #add file # define KEYWORD_DATA string
+		else
+			printf -v "${KEYWORD}_DATA" "%s" "NULL" # if keyword is not in the file set KEYWORD_DATA to NULL
+			printf "Either one or both tags for %s data is missing from file %s. %s data set to NULL and will not be added to output files\n" "${KEYWORD,,}" "${}" "${KEYWORD,,}" # add file # print error message saying one or both tags are missing. Continue script though, this is just to inform the user incase they want that data.
+		fi
+	else
+		printf "ERROR: KEYWORD array in script file contains file keywords besides calc and mol"
+		exit 1 # change this error code to something useful
+	fi
+done
 
 ### end of rewrite ###
 
