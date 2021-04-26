@@ -110,15 +110,13 @@ fi
 #     Regarding the tags:
 #         The header is <keyword> and the footer is </keyword> and they must be in the appropriate file. If is is in the wrong file it will be ignored.
 #         This is case insensitive but EVERYHTING ELSE MUST BE EXACT. aka is you use < keyword> or forget the / it will NOT WORK.
-KEYWORD=(calc ROUTE calc CM mol ROUTEADD mol XYZ mol BASIS calc SOLVENT) 
+KEYWORD=(calc SUFFIX calc OLDCHK calc ROUTE calc CM mol ROUTEADD mol XYZ mol BASIS calc SOLVENT) # may split into two portions. One is values not to be changed, the other is parts hat can be changed.
 
 # parse the KEYWORD array to deermine where to find what data and then set that data to appropriate strings
 for (( INDEX = 0 ; INDEX < "${#KEYWORD[@]}" ; INDEX += 2 )) ; do
 	#use this to parse array and find the relavent data
-	if [[ "${KEYWORD[$INDEX]}" -eq "calc" ]] ; then
-		
-		#look in calc file
-		
+	if [[ "${KEYWORD[$INDEX]}" -eq "calc" ]] ; then # if data is in the calc file then ass the keyword to the KEYWORD_CALC array. This will be used later.
+		KEYWORD_CALC+=("${KEYWORD[$(( INDEX + 1 ))]}")
 	elif [[ "${KEYWORD[$INDEX]}" -eq "mol" ]] ; then
 		if $( grep -iqE "<${KEYWORD}>" ${} ) && $( grep -iqE "</${KEYWORD}>" ${} ) ; then #add file #if "<keyword>" and "</keyword>" present then attempt to read that data. this is case insensitive ex. "<xyz>" "<XYZ>" "<xYz>" will all work. This is done to prevent issues with typos.
 			if [[ $( grep -ic "<${KEYWORD}>" ${} ) -gt 1 ]] || [[ $( grep -ic "</${KEYWORD}>" ${} ) -gt 1 ]] ; then
