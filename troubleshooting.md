@@ -26,9 +26,13 @@ or `# freq b3lyp/6-31g* empiricalDispersion=gd3bj CPHF(MaxInv=10000)`
 
 ## "OrtVc1 failed #1"  
 
-**Error Explanation:** This occurs during a frequency calculation when Raman intensities are predicted. I have found one good [resource](https://www.somewhereville.com/2015/01/01/ortvc1-failed-1-workaround-in-gaussian09-warning-about-pre-resonance-raman-spectra-in-gaussview-45/) with an explanation of the error but I will summarize their explanation. Raman intensity calculations use coupled perturbed Hartree-Fock ([CPHF](https://gaussian.com/cphf/)) which can give an error when running a calculation with both molecular symmetry and the fast multipole method ([FMM](https://gaussian.com/fmm/)) turned on. FMM is turned on or off depending on whether Gaussian predicts it will give a significant speed increase and not introduce and significant errors. Therefore, to remedy this problem A workaround can be used. 
+**Error Explanation:** This occurs during a frequency calculation when Raman intensities are predicted. I have found one good [resource](https://www.somewhereville.com/2015/01/01/ortvc1-failed-1-workaround-in-gaussian09-warning-about-pre-resonance-raman-spectra-in-gaussview-45/) with an explanation of the error but I will summarize their explanation. Raman intensity calculations use coupled perturbed Hartree-Fock ([CPHF](https://gaussian.com/cphf/)) which can give an error when running a calculation with both molecular symmetry and the fast multipole method ([FMM](https://gaussian.com/fmm/)) turned on. FMM is turned on or off depending on whether Gaussian predicts it will give a significant speed increase and not introduce and significant errors. Therefore, to remedy this problem A workaround can be used.  
 
-**Error Fix:** Using `FMM=NoParallelCPHF` may help elliminate the problem. Using `Int=Acc2E=11` may also help.
+**Error Fix:** Using `FMM=NoParallelCPHF` may help elliminate the problem. Using `Int=Acc2E=11` may also help.  
 
+## "Wanted an integer as input. Found a string as input."  
 
+**Error Explanation:** This occurs when you forget to add a title to your .com input file. Gaussian expects to find a title then your molecule specification data. When you forget the title it reads the charge and multiplicity and xyz data as the title and then looks below that section for your molecule data. When it doesn't find it the above error is generated.  
+
+**Error Fix:** Add a title  
 
