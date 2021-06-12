@@ -37,8 +37,11 @@ When run for the first time a dialg will appear that asks you to input your emai
 The wall-time is passed on to the run script so that long running calulations can be automatically resubmitted and restarted. This currently only work with opt and freq calculations. It is currently disabled (even with the `-r` argument) for TD-DFT calulations as an error occurs with the employed method of restarting calulations and the calulations has to be started fresh. An email stating that the calculation ended with exit code 77 indicates that the calculation was resubmitted to SLURM successfully. An exit code of 66 indicates unsuccessful resubmission. All other exit codes are from the calculation itself.  
 
 ## multiComWriter.sh  
+This script is being rewritten. Once done it will enable the writing on multiple gaussian input files with ease.  
 
 ## NTOcomwriter.sh  
+Takes a completed TD or TDA calculation and writes .com files for the generation of S<sub>1</sub> and T<sub>1</sub> of natural transition orbitals (NTOs) with gaussian. Requires the .log and .chk files to be present. Run using:  
+`./NTOcomwriter.sh <file.com>`  
 
 ## RSHOpt.sh  
 The boundary values in the script can be changed to speed up calculations if you are confident that the optimum w value is still within the bounded range. If the script determines that the optimum value (or a value very close to it) is the optimum value then you have set the boundary too tight and you should re-run the optimization with a wider boundary.  
@@ -50,6 +53,7 @@ Run using `./valueExtractor.sh <log file>.log [<file name>.csv]`. The second arg
 To analyze a batch of files in a for loop use in the following fashion: ` for F in *.log ; do /valueExtractor.sh ${F} <file name>.csv ; done`  
 
 ## gparse.sh  
+Was made to extract two-electron integral data from gaussian log files. I will be surprised if anyone needs to use this.  
 
 ## qstat.sh  
 Alternative to using `squeue` on servers running Slurm. Running the script without any arguments gives a brief summary of the total number of jobs you have submitted and a break down of how many are running or queued. Additionally, the number of files that are set to be deleted from your scratch folder is also printed. For example:  
@@ -90,6 +94,7 @@ alias qs="~/Bash-DFT-Tools/DFT_Scripts/qstat.sh"
 Aliasing the file in the cloned respository allows you to take advantage of any updates to the script by simpling pulling (using `git pull`) the repository. 
 
 ## renderPovrayGraham.sh
+If you choose to render POVray files on a computecanada server this makes things simpler. Until this readme is updated again, look in the script itself for instrucions on how to use it. 
 
 ## Tips  
 ### Memory  
@@ -104,3 +109,17 @@ When making your gaussian input file you should choose an amout of memory that f
 | 72  | 44 | 192   | 4.4  |
  
 **IMPORTANT:** The sg16submit.sh script requests 2 G more memory from SLURM than is specified in your input file. Make sure to adjust the memory you request so that the **final amount** of memory requested matches the node memory.  
+
+### Formchk Runs Out of Memory  
+use `GAUSS_MEMDEF=<memory amount in words>` For example, if formchk says it needs 500MW then use `GAUSS_MEMDEF=5000000000`.  
+**IMPORTANT:** This needs to be used directly before calling formchk.  
+Example:  
+```
+GAUSS_MEMDEF=5000000000 formchk fancyMolecule.chk
+```
+In a loop:  
+```
+for F in *.chk ; do GAUSS_MEMDEF=5000000000 formchk ${F} ; done
+```
+
+
