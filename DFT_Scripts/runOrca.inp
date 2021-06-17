@@ -1,0 +1,22 @@
+#triazine HMAT3 structure optimization using PBEh-3c method
+! PBEh-3c OPT NormalPrint Grid3 FinalGrid5 TightSCF
+#nprocs <number of cores> gives the number of cores to use
+%pal
+	nprocs 8
+end
+# The memory should be no more than 75% of what is given for the calculation. Imp! total memory = nprocs X maxcore
+%maxcore 3000
+%scf
+	MaxIter 500
+	CNVDIIS 1
+	CNVSOSCF 1 
+end
+
+#for an xyzfile use:* xyzfile 0 1 input.xyz
+#for xyz data use:
+#*xyz 0 1
+# xyz data...
+#*
+#change charge and multiplicity accordingly
+* xyzfile 0 1 input.xyz
+
