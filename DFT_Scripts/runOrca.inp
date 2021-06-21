@@ -1,5 +1,5 @@
-#triazine HMAT3 structure optimization using PBEh-3c method
-! PBEh-3c OPT NormalPrint Grid3 FinalGrid5 TightSCF
+# double hybrid DFT calc using wB2PYLP. def2-TZVP basis. RI aprox with MP2 part. RIJCOSX approx with SCF portion. toluene solvent
+! RIJCOSX RI-wB2PLYP D3BJ def2-TZVP def2/J def2-TZVP/C TIGHTSCF Grid5 FINALGrid6 CPCM(toluene)
 #nprocs <number of cores> gives the number of cores to use
 %pal
 	nprocs 8

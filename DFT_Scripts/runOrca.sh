@@ -4,27 +4,33 @@
 #SBATCH --time=00-12:00            # calculation wall time (DD-HH:MM)
 #SBATCH --mail-type=ALL            # email user when jobs starts, ends, fails, requeues, and on stage out
 #SBATCH --mail-user=npaisley@chem.ubc.ca 
-#SBATCH --export=JOBID=%j          # makes jobid a used variable
+#SBATCH --export=JOBID=%j          # makes jobid a usable variable
+#SBATCH --export=ORCA_INPUT=<file>.inp # Input file name. *** IMP! set this ***
+#SBATCH --output=<file>-%j.log       # output file for the calculation. *** IMP! set this ***
 
 #submit this using: sbatch runOrca.sh
 
-#input file name
-### MAKE SURE YOU SET THIS ###
-ORCA_INPUT="file.inp"
-######
-
 #output file header with some general information
-printf '%s\nOrca calculation of %s\nNode: %s\nCalculation directory: \nCalculation Script: %s\nStarted on %s\n%s\n' "######" "${ORCA_INPUT}" "$( hostname )" "$( pwd )" "$( basename ${BASH_SOURCE} )" "$( date )" "######"
+printf 'Orca calculation of %s\nNode: %s\nCalculation directory: \nCalculation Script: %s\nStarted on %s\n' "${ORCA_INPUT}" "$( hostname )" "$( pwd )" "$( basename ${BASH_SOURCE} )" "$( date )"
 
 #load orca and required modules, Set MPI variables
 module load StdEnv/2020  gcc/9.3.0  openmpi/4.0.3
 module load orca/4.2.1
+
+#set openmpi paths
+export PATH=/users/home/user/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/users/home/user/openmpi/lib:$LD_LIBRARY_PATH
+#set orca paths and communication protocols
+export orcadir=/cvmfs/restricted.computecanada.ca/easybuild/software/2020/avx2/MPI/gcc9/openmpi4/orca/4.2.1/
+export RSH_COMMAND="/usr/bin/ssh -x"
+export PATH=/cvmfs/restricted.computecanada.ca/easybuild/software/2020/avx2/MPI/gcc9/openmpi4/orca/4.2.1/:$PATH
+export LD_LIBRARY_PATH=/cvmfs/restricted.computecanada.ca/easybuild/software/2020/avx2/MPI/gcc9/openmpi4/orca/4.2.1/:$LD_LIBRARY_PATH
 export OMPI_MCA_mtl='^mxm'
 export OMPI_MCA_pml='^yalla'
 
 #actually run orca
-${EBROOTORCA}/orca "${ORCA_INPUT}" >> "${ORCA_INPUT%.inp}-${JOBID}.out"
+${EBROOTORCA}/orca "${ORCA_INPUT}" >> "${ORCA_INPUT%.inp}.out"
 CALC_EXIT=$?
 
-printf '%s\nExit Orca Calculation of %s\nExit code: %s\nExit time: %s\n%s\n' "######" "${ORCA_INPUT}" "${CALC_EXIT}" "$( date )" "######"
+printf 'Exit Orca Calculation of %s\nExit code: %s\nExit time: %s\n\n' "${ORCA_INPUT}" "${CALC_EXIT}" "$( date )"
 exit ${CALC_EXIT}
