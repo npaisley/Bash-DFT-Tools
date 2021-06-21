@@ -1,15 +1,26 @@
 # double hybrid DFT calc using wB2PYLP. def2-TZVP basis. RI aprox with MP2 part. RIJCOSX approx with SCF portion. toluene solvent
-! RIJCOSX RI-wB2PLYP D3BJ def2-TZVP def2/J def2-TZVP/C TIGHTSCF Grid5 FINALGrid6 CPCM(toluene)
+! RIJCOSX RI-wB2PLYP D3BJ def2-TZVP def2/J def2-TZVP/C TIGHTSCF Grid5 FINALGrid6 CPCM(toluene) largeprint
 #nprocs <number of cores> gives the number of cores to use
+
 %pal
 	nprocs 8
 end
+
 # The memory should be no more than 75% of what is given for the calculation. Imp! total memory = nprocs X maxcore
 %maxcore 3000
-%scf
-	MaxIter 500
-	CNVDIIS 1
-	CNVSOSCF 1 
+
+#%scf
+#	MaxIter 500
+#	CNVDIIS 1
+#	CNVSOSCF 1 
+#end
+
+%TDDFT
+	nroots 10
+	maxdim 5
+	donto true
+	dosoc true
+	printlevel 3
 end
 
 #for an xyzfile use:* xyzfile 0 1 input.xyz
@@ -18,5 +29,7 @@ end
 # xyz data...
 #*
 #change charge and multiplicity accordingly
-* xyzfile 0 1 input.xyz
+* xyz 0 1
+
+*
 
