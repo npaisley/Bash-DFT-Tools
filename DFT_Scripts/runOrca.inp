@@ -1,13 +1,18 @@
-# double hybrid DFT calc using wB2PYLP. def2-TZVP basis. RI aprox with MP2 part. RIJCOSX approx with SCF portion. toluene solvent
-! RIJCOSX RI-wB2PLYP D3BJ def2-TZVP def2/J def2-TZVP/C TIGHTSCF Grid5 FINALGrid6 CPCM(toluene) largeprint
-#nprocs <number of cores> gives the number of cores to use
+# def2-TZVP basis and auxillary basis sets. RIJCOSX approx for SCF portion. toluene solvent. largeprint essential for plotting MOs in avogadro.
+! RIJCOSX WB97X def2-TZVP def2/J TIGHTSCF Grid5 FINALGrid6 CPCM(toluene) largeprint
 
+#nprocs <number of cores> gives the number of cores to use
 %pal
-	nprocs 8
+	nprocs 16
 end
 
 # The memory should be no more than 75% of what is given for the calculation. Imp! total memory = nprocs X maxcore
-%maxcore 3000
+%maxcore 11800
+
+%method
+	RangeSepEXX True #apparently this needs to be here, dont know why
+	RangeSepMu   0.1025 #this is only useful if you want to change the range separation w parameter for an RSH functional
+end
 
 #%scf
 #	MaxIter 500
@@ -20,7 +25,7 @@ end
 	maxdim 5
 	donto true
 	dosoc true
-	printlevel 3
+	printlevel 3 #important for getting all the SOCME info
 end
 
 #for an xyzfile use:* xyzfile 0 1 input.xyz
