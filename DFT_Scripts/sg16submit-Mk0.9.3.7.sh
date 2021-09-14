@@ -50,11 +50,11 @@ ER_GAUSSIAN_ACCESS=12
 ### Functions ###
 usage () { 
 # read current email
-EMAIL=$( grep '#EMAIL=' ${LOG} )
+EMAIL=$( grep -a '#EMAIL=' ${LOG} )
 EMAIL=${EMAIL#*=}
 EMAIL=${EMAIL:-"none set"}
 # read current default walltime
-WALLTIME=$( grep \#WALLTIME= ${LOG} )
+WALLTIME=$( grep -a '\#WALLTIME=' ${LOG} )
 WALLTIME=${WALLTIME#*=}
 
 echo
@@ -342,7 +342,7 @@ if [ -z ${SCRIPT_ALT} ] && [ ! -f ${SCRIPT_CALC} ]; then
 fi
 
 # check if an email has been specified. If it has not been then ask user to set one
-EMAIL=$( grep '#EMAIL=' ${LOG} )
+EMAIL=$( grep -a '#EMAIL=' ${LOG} )
 EMAIL=${EMAIL#*=}
 while [ -z ${EMAIL} ]; do
 	echo
@@ -353,7 +353,7 @@ while [ -z ${EMAIL} ]; do
 done
 
 # set walltime and if RESTART unset set it to FALSE
-WALLTIME=$( grep \#WALLTIME= ${LOG} )
+WALLTIME=$( grep -a '\#WALLTIME=' ${LOG} )
 WALLTIME=${WALLTIME#*=}
 TIME=${WALLTIME_ALT:-$WALLTIME}
 RESTART=${RESTART:-FALSE}
