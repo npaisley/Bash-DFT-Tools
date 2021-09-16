@@ -30,6 +30,7 @@ LOG=${LOG_DIR}/sg16submit.log
 COMP_VALUE=2 # this value is added to the memory requested in the com file to account for gaussian over use of memory. Value in GB. Gaussian typically uses about 1 GB more than specified.
 SCRIPT_NAME=$( basename $BASH_SOURCE )
 SCRIPT_FULLNAME=$( realpath $BASH_SOURCE )
+ACCOUNT="def-zhudson"
 ######
 
 ### EXIT CONDITIONS ###
@@ -404,8 +405,8 @@ echo "	type: new submission" >> ${LOG}
 echo "	script: ${SCRIPT_NAME}" >> ${LOG}
 echo "	time: $( date )" >> ${LOG}
 echo "	file: $( realpath ${COM_FULLNAME} )" >> ${LOG}
-echo "	command: sbatch --mail-user=${EMAIL} --time=${TIME} --mem=${MEM_VAL}${MEM_UNIT} --cpus-per-task=${NCPUS} --output=${COM_NAME}-%j.out --export=COM_NAME=${COM_NAME},EMAIL=${EMAIL},TIME=${TIME},MEM_VAL=${MEM_VAL},MEM_UNIT=${MEM_UNIT},NCPUS=${NCPUS},SCRIPT=${SCRIPT},TIMEOUT=${TIMEOUT},RESTART=${RESTART},LOG=${LOG} ${SCRIPT}" >> ${LOG}
-sbatch --mail-user=${EMAIL} --time=${TIME} --mem=${MEM_VAL}${MEM_UNIT} --cpus-per-task=${NCPUS} --output=${COM_NAME}-%j.out --export=COM_NAME=${COM_NAME},EMAIL=${EMAIL},TIME=${TIME},MEM_VAL=${MEM_VAL},MEM_UNIT=${MEM_UNIT},NCPUS=${NCPUS},SCRIPT=${SCRIPT},TIMEOUT=${TIMEOUT},RESTART=${RESTART},LOG=${LOG} ${SCRIPT} | tee -a ${LOG}
+echo "	command: sbatch --account=${ACCOUNT} --mail-user=${EMAIL} --time=${TIME} --mem=${MEM_VAL}${MEM_UNIT} --cpus-per-task=${NCPUS} --output=${COM_NAME}-%j.out --export=COM_NAME=${COM_NAME},EMAIL=${EMAIL},TIME=${TIME},MEM_VAL=${MEM_VAL},MEM_UNIT=${MEM_UNIT},NCPUS=${NCPUS},SCRIPT=${SCRIPT},TIMEOUT=${TIMEOUT},RESTART=${RESTART},LOG=${LOG} ${SCRIPT}" >> ${LOG}
+sbatch --account=${ACCOUNT} --mail-user=${EMAIL} --time=${TIME} --mem=${MEM_VAL}${MEM_UNIT} --cpus-per-task=${NCPUS} --output=${COM_NAME}-%j.out --export=COM_NAME=${COM_NAME},EMAIL=${EMAIL},TIME=${TIME},MEM_VAL=${MEM_VAL},MEM_UNIT=${MEM_UNIT},NCPUS=${NCPUS},SCRIPT=${SCRIPT},TIMEOUT=${TIMEOUT},RESTART=${RESTART},LOG=${LOG} ${SCRIPT} | tee -a ${LOG}
 if [ ! $? -eq 0 ]; then
 	echo "ERROR: submission unsuccessful"
 	exit ${ER_SUB_FAIL}
