@@ -45,6 +45,9 @@ Takes a completed TD or TDA calculation and writes .com files for the generation
 
 ## RSHOpt.sh  
 The boundary values in the script can be changed to speed up calculations if you are confident that the optimum w value is still within the bounded range. If the script determines that the optimum value (or a value very close to it) is the optimum value then you have set the boundary too tight and you should re-run the optimization with a wider boundary.  
+The easiest way to run this is using `./sg16submit-Mkx.x.x.sh -f <file.com> [-t <dd-hh:mm>] -s RSHOpt-Mkx.x.x.sh`. This requests the sg16submit script to use the RSHOpt run script instead of the default one. Make sure that the input file (file.com) is made following the example RSHOpt input format. If it does not then calculation will fail. Also, it is essential that a check point file with the **exact** same name as the input .com file is present of the calculation will fail.  
+**NOTE:** I highly suggest you run these in there own file as a large amount of files are written.
+**NOTE:** The sg16submit restart option does not currently work with RSHOpt calculations, however, if the optimization times out and is resubmitted it will restart from where it left off.
 
 ## valueExtractor.sh    
 Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files and outputs a comma separated string. The ouput can be directed to a file or to the command line. If ouput is directed to a file the header will only be printed once.  
