@@ -97,8 +97,8 @@ JL_1=${JL_1_STR// /}
 #fi
 
 # new version of the EHOMO(N+1) section
-JL_2_ALPHA=$( grep -E "Alpha[[:space:]]{1,}occ." ${COM_NAME}-${1}-anion.log | tail -n 1 | xargs -n 1 | tails -n 1)
-JL_2_BETA=$( grep -E "Beta[[:space:]]{1,}occ." ${COM_NAME}-${1}-anion.log | tail -n 1 | xargs -n 1 | tails -n 1)
+JL_2_ALPHA=$( grep -E "Alpha[[:space:]]{1,}occ." ${COM_NAME}-${1}-anion.log | tail -n 1 | xargs -n 1 | tail -n 1)
+JL_2_BETA=$( grep -E "Beta[[:space:]]{1,}occ." ${COM_NAME}-${1}-anion.log | tail -n 1 | xargs -n 1 | tail -n 1)
 if [ $( echo "${JL_2_ALPHA}>${JL_2_BETA}" | bc ) -gt 0 ]; then 
 	JL_2=${JL_2_ALPHA}
 else 
