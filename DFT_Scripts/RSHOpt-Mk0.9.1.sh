@@ -79,17 +79,27 @@ JL_1_STR=${JL_1_STR##* }
 JL_1=${JL_1_STR// /}
 
 #Store EHOMO(N+1) value as variable. Looks at both alpha and beta orbitals and uses higher value
-JL_2_STR_ALPHA=$( grep "Alpha  occ." ${COM_NAME}-${1}-anion.log | tail -n 1 )
-JL_2_STR_ALPHA=${JL_2_STR_ALPHA%%+([[:space:]])}
-JL_2_STR_ALPHA=${JL_2_STR_ALPHA##* }
-JL_2_ALPHA=${JL_2_STR_ALPHA// /}
+#old version is commented out in this section with new version below. If this breaks things then uncomment the old version AND comment out the new
+#JL_2_STR_ALPHA=$( grep "Alpha  occ." ${COM_NAME}-${1}-anion.log | tail -n 1 )
+#JL_2_STR_ALPHA=${JL_2_STR_ALPHA%%+([[:space:]])}
+#JL_2_STR_ALPHA=${JL_2_STR_ALPHA##* }
+#JL_2_ALPHA=${JL_2_STR_ALPHA// /}
+#
+#JL_2_STR_BETA=$( grep " Beta  occ." ${COM_NAME}-${1}-anion.log | tail -n 1 )
+#JL_2_STR_BETA=${JL_2_STR_BETA%%+([[:space:]])}
+#JL_2_STR_BETA=${JL_2_STR_BETA##* }
+#JL_2_BETA=${JL_2_STR_BETA// /}
+#
+#if [ $(echo "${JL_2_ALPHA}>${JL_2_BETA}" | bc) -gt 0 ]; then 
+#	JL_2=${JL_2_ALPHA}
+#else 
+#	JL_2=${FL_2_BETA}
+#fi
 
-JL_2_STR_BETA=$( grep " Beta  occ." ${COM_NAME}-${1}-anion.log | tail -n 1 )
-JL_2_STR_BETA=${JL_2_STR_BETA%%+([[:space:]])}
-JL_2_STR_BETA=${JL_2_STR_BETA##* }
-JL_2_BETA=${JL_2_STR_BETA// /}
-
-if [ $(echo "${JL_2_ALPHA}>${JL_2_BETA}" | bc) -gt 0 ]; then 
+# new version of the EHOMO(N+1) section
+JL_2_ALPHA=$( grep -E "Alpha[[:space:]]{1,}occ." ${COM_NAME}-${1}-anion.log | tail -n 1 | xargs -n 1 | tails -n 1)
+JL_2_BETA=$( grep -E "Beta[[:space:]]{1,}occ." ${COM_NAME}-${1}-anion.log | tail -n 1 | xargs -n 1 | tails -n 1)
+if [ $( echo "${JL_2_ALPHA}>${JL_2_BETA}" | bc ) -gt 0 ]; then 
 	JL_2=${JL_2_ALPHA}
 else 
 	JL_2=${FL_2_BETA}
@@ -128,6 +138,7 @@ COM_ROUTE=$( grep "^\#" ${COM_NAME}.com | head -n 1 )
 printf -v COM_W "%05d" $1
 
 #Set appropriate title, charge, and multiplicity
+#if you need to change the charge or multiplicity change COM_CRG_MULTI="c m" so that c and m are as required
 for CHARGE in cation neutral anion
 do
 	case $CHARGE in
