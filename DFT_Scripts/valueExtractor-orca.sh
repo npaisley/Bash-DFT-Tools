@@ -12,7 +12,7 @@ usage () {
 
 #variables
 HA_TO_EV=27.2114
-HEADER="File,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Energy (au),S0 -> S1 (eV),S0 -> S2 (eV),S0 -> T1 (eV),S0 -> T2 (eV),deltaEst"
+HEADER="File,HOMO (au),HOMO (eV),LUMO (au),LUMO (eV),Egap (eV),Energy (au),S0 -> S1 (eV),S0 -> S2 (eV),S0 -> S3 (eV),S0 -> S4 (eV),S0 -> T1 (eV),S0 -> T2 (eV),S0 -> T3 (eV),S0 -> T4 (eV),deltaEst"
 
 #check if $1 has been given. If it hasn't then explain the error, give the proper usage, and exit with status 1
 if [[ -z "${1}" ]] ; then
