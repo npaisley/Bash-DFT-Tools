@@ -42,7 +42,9 @@ if grep -qi 'TD-DFT/TDA EXCITED STATES (SINGLETS)' "${1}"; then
 	SINGLET_LINE_NUMBER=$( grep -in 'TD-DFT/TDA EXCITED STATES (SINGLETS)' ${1} | grep -oE '^[0-9]{1,}' )
 	# energy in Ha is [3] in eV is [5]
 	SINGLET1=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}1:" ))
-	SINGLET2=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" ))	
+	SINGLET2=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" ))
+	SINGLET3=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}3:" ))
+	SINGLET4=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}4:" ))	
 else
 	SINGLET1[3]="Not calculated"
 	SINGLET2[3]="Not calculated"
@@ -55,7 +57,9 @@ if grep -qi 'TD-DFT/TDA EXCITED STATES (TRIPLETS)' "${1}"; then
 	TRIPLET_LINE_NUMBER=$( grep -in 'TD-DFT/TDA EXCITED STATES (TRIPLETS)' ${1} | grep -oE '^[0-9]{1,}' )
 	# energy in Ha is [3] in eV is [5]
 	TRIPLET1=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}1:" ))
-	TRIPLET2=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" ))	
+	TRIPLET2=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" ))
+	TRIPLET3=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}3:" ))
+	TRIPLET4=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}4:" ))	
 else
 	TRIPLET1[3]="Not calculated"
 	TRIPLET2[3]="Not calculated"
@@ -73,14 +77,14 @@ if [[ -n "${2}" ]] ; then
 		touch "${2}"
 	fi
 	if grep -q "${HEADER}" "${2}" ; then
-		echo "$( basename "${1}" ),${HOMO_LINE[2]},${HOMO_LINE[3]},${LUMO_LINE[2]},${HOMO_LINE[3]},${EGAP},${TOTAL_ENERGY_LINE[4]},${SINGLET1[5]},${SINGLET2[5]},${TRIPLET1[5]},${TRIPLET1[5]},${DELTAEST}" >> "${2}"
+		echo "$( basename "${1}" ),${HOMO_LINE[2]},${HOMO_LINE[3]},${LUMO_LINE[2]},${HOMO_LINE[3]},${EGAP},${TOTAL_ENERGY_LINE[4]},${SINGLET1[5]},${SINGLET2[5]},${SINGLET3[5]},${SINGLET4[5]},${TRIPLET1[5]},${TRIPLET1[5]},${TRIPLET3[5]},${TRIPLET4[5]},${DELTAEST}" >> "${2}"
 	else
 		echo "${HEADER}" >> "${2}"
-		echo "$( basename "${1}" ),${HOMO_LINE[2]},${HOMO_LINE[3]},${LUMO_LINE[2]},${HOMO_LINE[3]},${EGAP},${TOTAL_ENERGY_LINE[4]},${SINGLET1[5]},${SINGLET2[5]},${TRIPLET1[5]},${TRIPLET1[5]},${DELTAEST}" >> "${2}"
+		echo "$( basename "${1}" ),${HOMO_LINE[2]},${HOMO_LINE[3]},${LUMO_LINE[2]},${HOMO_LINE[3]},${EGAP},${TOTAL_ENERGY_LINE[4]},${SINGLET1[5]},${SINGLET2[5]},${SINGLET3[5]},${SINGLET4[5]},${TRIPLET1[5]},${TRIPLET1[5]},${TRIPLET3[5]},${TRIPLET4[5]},${DELTAEST}" >> "${2}"
 	fi
 else
 	echo "${HEADER}"
-	echo "$( basename "${1}" ),${HOMO_LINE[2]},${HOMO_LINE[3]},${LUMO_LINE[2]},${HOMO_LINE[3]},${EGAP},${TOTAL_ENERGY_LINE[4]},${SINGLET1[5]},${SINGLET2[5]},${TRIPLET1[5]},${TRIPLET1[5]},${DELTAEST}"
+	echo "$( basename "${1}" ),${HOMO_LINE[2]},${HOMO_LINE[3]},${LUMO_LINE[2]},${HOMO_LINE[3]},${EGAP},${TOTAL_ENERGY_LINE[4]},${SINGLET1[5]},${SINGLET2[5]},${SINGLET3[5]},${SINGLET4[5]},${TRIPLET1[5]},${TRIPLET1[5]},${TRIPLET3[5]},${TRIPLET4[5]},${DELTAEST}"
 fi
 
 exit 0
