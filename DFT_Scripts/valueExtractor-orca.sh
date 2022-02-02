@@ -41,8 +41,8 @@ TOTAL_ENERGY_LINE=($( grep -i 'final single point energy' ${1} ))
 if grep -qi 'TD-DFT/TDA EXCITED STATES (SINGLETS)' "${1}"; then
 	SINGLET_LINE_NUMBER=$( grep -in 'TD-DFT/TDA EXCITED STATES (SINGLETS)' ${1} | grep -oE '^[0-9]{1,}' )
 	# energy in Ha is [3] in eV is [5]
-	SINGLET1=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}1:" "${1}" ))
-	SINGLET2=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" "${1}" ))	
+	SINGLET1=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}1:" ))
+	SINGLET2=($( tail -n +${SINGLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" ))	
 else
 	SINGLET1[3]="Not calculated"
 	SINGLET2[3]="Not calculated"
@@ -54,8 +54,8 @@ fi
 if grep -qi 'TD-DFT/TDA EXCITED STATES (TRIPLETS)' "${1}"; then
 	TRIPLET_LINE_NUMBER=$( grep -in 'TD-DFT/TDA EXCITED STATES (TRIPLETS)' ${1} | grep -oE '^[0-9]{1,}' )
 	# energy in Ha is [3] in eV is [5]
-	TRIPLET1=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}1:" "${1}" ))
-	TRIPLET2=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" "${1}" ))	
+	TRIPLET1=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}1:" ))
+	TRIPLET2=($( tail -n +${TRIPLET_LINE_NUMBER} ${1} | grep -m 1 -Ei "state[[:space:]]{1,}2:" ))	
 else
 	TRIPLET1[3]="Not calculated"
 	TRIPLET2[3]="Not calculated"
