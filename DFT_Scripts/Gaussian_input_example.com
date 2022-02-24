@@ -12,5 +12,6 @@
 <structural data>
 
 <split or custom basis set, etc.>
+<make sure are two blank lines at the end>
 
 
