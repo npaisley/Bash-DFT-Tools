@@ -29,7 +29,7 @@
 
 #load required modules if they aren't loaded
 if ! module list | grep -q "povray" ; then
-	module load intel/2018.3
+	module load nixpkgs/16.09  intel/2018.3
 	module load povray
 fi
 
