@@ -55,7 +55,7 @@ The easiest way to run this is using `./sg16submit-Mkx.x.x.sh -f <file.com> [-t 
 Extracts HOMO, LUMO, dipole, total energy, S1, and T1 information from gaussian log files and outputs a comma separated string. The ouput can be directed to a file or to the command line. If ouput is directed to a file the header will only be printed once.  
 
 Run using `./valueExtractor.sh <log file>.log [<file name>.csv]`. The second argument is the ouput file. This is not required. 
-To analyze a batch of files in a for loop use in the following fashion: ` for F in *.log ; do /valueExtractor.sh ${F} <file name>.csv ; done`  
+To analyze a batch of files in a for loop use in the following fashion: ` for F in *.log ; do ./valueExtractor.sh ${F} summary.csv ; done`  
 
 ## gparse.sh  
 Was made to extract two-electron integral data from gaussian log files. I will be surprised if anyone needs to use this.  
